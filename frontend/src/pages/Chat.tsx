@@ -56,16 +56,29 @@ const Chat: React.FC = () => {
     const startCompanionChat = async (companionId: string) => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/chat/create", { participantId: companionId },
+                "http://localhost:5000/chat/create",
+                { participantId: companionId },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
-            console.log(response.data);
-            setChats(prev => [...prev, response.data]);
+            
+            // Set current chat immediately
+            setCurrentChat(response.data);
+            
+            // Add to chats list if not already present
+            setChats(prevChats => {
+                const chatExists = prevChats.some(chat => chat._id === response.data._id);
+                if (chatExists) {
+                    return prevChats;
+                }
+                return [...prevChats, response.data];
+            });
+            
             setShowCompanions(false);
         } catch (error) {
             setError('Failed to start chat with companion');
         }
     };
+    
 
     useEffect(() => {
         initializeChat();
@@ -115,8 +128,27 @@ useEffect(() => {
             }
         });
 
+        socket.current.on('newChat', (chat) => {
+            console.log('New chat received:', chat);
+            setChats(prevChats => {
+                // Check if chat already exists
+                const exists = prevChats.some(existingChat => 
+                    existingChat._id === chat._id
+                );
+                
+                if (!exists) {
+                    return [...prevChats, chat];
+                }
+                
+                // Update existing chat if it exists
+                return prevChats.map(existingChat => 
+                    existingChat._id === chat._id ? chat : existingChat
+                );
+            });
+        });
+
         socket.current.on('newMessage', ({ chatId, message }) => {
-            console.log('Calling updateChatWithNewMessage');
+            console.log('New message received:', { chatId, message });
             updateChatWithNewMessage(chatId, message);
         });
     };

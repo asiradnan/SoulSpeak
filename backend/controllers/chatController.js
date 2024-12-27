@@ -2,67 +2,91 @@ import Chat from '../models/Chat.js';
 
 export async function createChat(req, res) {
   try {
-    const { participantId } = req.body;
-    const userId = req.user.id; // Assuming you have authentication middleware
+      const { participantId } = req.body;
+      const userId = req.user.id;
 
-    // Check if chat already exists
-    const existingChat = await Chat.findOne({
-      participants: { $all: [userId, participantId] }
-    });
+      // Check if chat already exists
+      const existingChat = await Chat.findOne({
+          participants: { $all: [userId, participantId] }
+      }).populate('participants', 'username email isOnline isCompanion');
 
-    if (existingChat) {
-      return res.status(200).json(existingChat);
-    }
+      if (existingChat) {
+          // Emit to both participants even if chat exists
+          const io = req.app.get('io');
+          [userId, participantId].forEach(id => {
+              io.to(id.toString()).emit('newChat', existingChat);
+          });
+          return res.status(200).json(existingChat);
+      }
 
-    const newChat = await Chat.create({
-      participants: [userId, participantId]
-    });
+      // Create new chat
+      const newChat = await Chat.create({
+          participants: [userId, participantId],
+          messages: []
+      });
 
-    res.status(201).json(newChat);
+      // Populate the chat with participant details
+      const populatedChat = await Chat.findById(newChat._id)
+          .populate('participants', 'username email isOnline isCompanion');
+
+      // Get Socket.IO instance
+      const io = req.app.get('io');
+      
+      // Emit to both participants' personal rooms
+      [userId, participantId].forEach(id => {
+          io.to(id.toString()).emit('newChat', populatedChat);
+      });
+
+      res.status(201).json(populatedChat);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      console.error('Create chat error:', error);
+      res.status(500).json({ error: error.message });
   }
 };
+
+
 
 export async function sendMessage(req, res) {
   console.log('sendMessage function called');
   try {
-    const { chatId, content } = req.body;
-    const userId = req.user.id;
-    console.log('userId:', userId);
-    console.log('chatId:', chatId);
-    console.log('content:', content);
+      const { chatId, content } = req.body;
+      const userId = req.user.id;
 
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-      return res.status(404).json({ message: 'Chat not found' });
-    }
+      const chat = await Chat.findById(chatId);
+      if (!chat) {
+          return res.status(404).json({ message: 'Chat not found' });
+      }
 
-    chat.messages.push({
-      sender: userId,
-      content
-    });
-    const savedChat = await chat.save();
-    const io = req.app.get('io');
+      // Add the new message
+      chat.messages.push({
+          sender: userId,
+          content
+      });
+      const savedChat = await chat.save();
 
-    if (!io) {
-      console.error("Socket.IO instance not found");
-      return res.status(500).json({ error: "Socket.IO instance unavailable" });
-    }
+      // Get populated chat data
+      const populatedChat = await Chat.findById(chatId)
+          .populate('participants', 'username email isOnline isCompanion');
 
-    if (!chatId) {
-      console.error("Invalid chatId");
-      return res.status(400).json({ error: "Invalid chatId" });
-    }
-    console.log("before io.to(chatId)");
-    io.to(chatId).emit('newMessage', {
-      chatId,
-      message: savedChat.messages[savedChat.messages.length - 1]
-    });
-    console.log('Message sent successfully');
-    res.status(200).json(chat);
+      const io = req.app.get('io');
+
+      // Emit new message to chat room
+      io.to(chatId).emit('newMessage', {
+          chatId,
+          message: savedChat.messages[savedChat.messages.length - 1]
+      });
+
+      // If this is the first message, emit newChat event to all participants
+      if (savedChat.messages.length === 1) {
+          chat.participants.forEach(participantId => {
+              io.to(participantId.toString()).emit('newChat', populatedChat);
+          });
+      }
+
+      res.status(200).json(savedChat);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      console.error('Send message error:', error);
+      res.status(500).json({ error: error.message });
   }
 };
 
