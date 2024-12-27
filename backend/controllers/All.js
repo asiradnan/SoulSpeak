@@ -10,7 +10,6 @@ import path from 'path';
 
 
 
-const JWT_SECRET = "soul";
 
 const storage = multer.diskStorage({
     
@@ -34,7 +33,7 @@ const upload = multer({ storage,
 
 export async function verifyEmail(req, res) {
     try {
-        const token = jwt.sign({ id: req.user.id }, JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         const url = `http://localhost:5000/confirm-email?token=${token}`;
 
         const transporter = nodemailer.createTransport({
@@ -62,7 +61,7 @@ export async function verifyEmail(req, res) {
 export async function confirmEmail(req, res) {
     try {
         const { token } = req.query;
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         await User.findByIdAndUpdate(decoded.id, { verified: true });
         res.redirect('http://localhost:5173/profile');
@@ -80,7 +79,7 @@ export async function sendPasswordResetEmail(req, res) {
             return res.status(404).json({ message: "User with this email does not exist" });
         }
 
-        const resetToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
 
         const transporter = nodemailer.createTransport({
@@ -114,7 +113,7 @@ export async function resetPassword(req, res) {
         const { token } = req.body;
         const { password } = req.body;
         console.log(    token, password)
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -221,7 +220,7 @@ export async function login(request, response) {
         }
         const token = jwt.sign(
             { id: user._id, email: user.email, username: user.username },
-            JWT_SECRET,
+            process.env.JWT_SECRET,
             { expiresIn: "48h" }
         );
 

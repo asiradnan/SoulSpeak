@@ -101,9 +101,9 @@ const Profile = () => {
     if (loading) return <p>Loading...</p>;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-8 bg-white/90 rounded-xl shadow-sm">
+        <div className="max-w-md mx-auto mt-10 p-8 bg-white/90 rounded-xl shadow-md border border-[#C5C5C5]">
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <div className="bg-[#C5C5C5]/20 border border-[#4D6A6D] text-[#4C5B61] px-4 py-3 rounded relative mb-6" role="alert">
                     {error}
                 </div>
             )}
@@ -115,12 +115,12 @@ const Profile = () => {
                 /> */}
                 {!isEditing ? (
                     <>
-                        <h3 className="text-xl font-semibold text-slate-700">{profile.name}</h3>
+                        <h3 className="text-xl font-semibold text-[#4D6A6D]">{profile.name}</h3>
 
-                        <p className="text-slate-500 mt-2">
+                        <p className="text-[#949896] mt-2">
                             Email: {profile.email}
                             {profile.verified ? (
-                                <span className="ml-2 text-sage-500">
+                                <span className="ml-2 text-[#4D6A6D]">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
@@ -128,7 +128,7 @@ const Profile = () => {
                             ) : (
                                 <button
                                     onClick={handleVerifyEmail}
-                                    className="ml-2 px-3 py-1 text-sm bg-sage-400 text-white rounded-md hover:bg-sage-500 transition-all duration-300 ease-in-out"
+                                    className="ml-2 px-3 py-1 text-sm bg-[#4D6A6D] text-white rounded-md hover:bg-[#829191] transition-all duration-300 ease-in-out"
                                 >
                                     Verify Email
                                 </button>
@@ -137,7 +137,7 @@ const Profile = () => {
 
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="mt-6 px-8 py-3 bg-sage-500 text-white rounded-lg hover:bg-sage-600 transition-all duration-300 ease-in-out"
+                            className="mt-6 px-8 py-3 bg-[#4D6A6D] text-white rounded-lg hover:bg-[#829191] transition-all duration-300 ease-in-out"
                         >
                             Edit Profile
                         </button>
@@ -150,7 +150,7 @@ const Profile = () => {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="Name"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <input
                             type="text"
@@ -158,7 +158,7 @@ const Profile = () => {
                             value={formData.username}
                             onChange={handleChange}
                             placeholder="Username"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <input
                             type="email"
@@ -166,13 +166,13 @@ const Profile = () => {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Email"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <select
                             name="referral"
                             value={formData.referral}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         >
                             <option value="">How did you find us?</option>
                             <option value="social">Social Media</option>
@@ -185,7 +185,7 @@ const Profile = () => {
                             name="mentalCondition"
                             value={formData.mentalCondition}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         >
                             <option value="">Select your condition</option>
                             <option value="Anxiety">Anxiety</option>
@@ -199,7 +199,7 @@ const Profile = () => {
                             name="ageGroup"
                             value={formData.ageGroup}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         >
                             <option value="">Select age group</option>
                             <option value="Under 18">Under 18</option>
@@ -216,21 +216,21 @@ const Profile = () => {
                             value={formData.country}
                             onChange={handleChange}
                             placeholder="Country"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <textarea
                             name="goals"
                             value={formData.goals}
                             onChange={handleChange}
                             placeholder="What are your goals?"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <textarea
                             name="preferences"
                             value={formData.preferences}
                             onChange={handleChange}
                             placeholder="Your preferences"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <input
                             type="password"
@@ -238,7 +238,7 @@ const Profile = () => {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="Current Password"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <input
                             type="password"
@@ -246,11 +246,11 @@ const Profile = () => {
                             value={formData.newPassword}
                             onChange={handleChange}
                             placeholder="New Password (optional)"
-                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                            className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white/80"
                         />
                         <button
                             type="submit"
-                            className="w-full bg-sage-500 text-white py-3 rounded-lg hover:bg-sage-600 transition-all duration-300 ease-in-out"
+                            className="w-full bg-[#4D6A6D] text-white py-3 rounded-lg hover:bg-[#829191] transition-all duration-300 ease-in-out"
                         >
                             Save Changes
                         </button>

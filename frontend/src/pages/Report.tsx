@@ -20,6 +20,7 @@ const Report = () => {
     profileId: '',
     chatId: ''
   });
+
   const fetchUserEmail = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -70,7 +71,6 @@ const Report = () => {
       console.error('Failed to submit report');
     }
   };
-  
 
   useEffect(() => {
     fetchReports();
@@ -84,10 +84,10 @@ const Report = () => {
   return (
     <div className="max-w-7xl mx-auto mt-10 p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold text-slate-700">Reports</h1>
+        <h1 className="text-2xl font-semibold text-[#4C5B61]">Reports</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-sage-500 text-white rounded-lg hover:bg-sage-600 transition-all duration-300"
+          className="flex items-center gap-2 px-4 py-2 bg-[#4D6A6D] text-white rounded-lg hover:bg-[#829191] transition-all duration-300"
         >
           <Plus size={20} />
           New Report
@@ -96,21 +96,21 @@ const Report = () => {
 
       <div className="overflow-x-auto bg-white/90 rounded-xl shadow-sm">
         <table className="w-full">
-          <thead className="bg-slate-50">
+          <thead className="bg-[#C5C5C5]">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Time</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Type</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Details</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Status</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-[#4C5B61]">Time</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-[#4C5B61]">Type</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-[#4C5B61]">Details</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-[#4C5B61]">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-[#C5C5C5]">
             {reports.map((report) => (
-              <tr key={report._id} className="hover:bg-slate-50">
-                <td className="px-6 py-4 text-sm text-slate-600">{formatDate(report.timestamp)}</td>
-                <td className="px-6 py-4 text-sm text-slate-600">{report.type}</td>
-                <td className="px-6 py-4 text-sm text-slate-600">{report.details}</td>
-                <td className="px-6 py-4 text-sm text-slate-600">{report.status}</td>
+              <tr key={report._id} className="hover:bg-[#C5C5C5]/20">
+                <td className="px-6 py-4 text-sm text-[#4D6A6D]">{formatDate(report.timestamp)}</td>
+                <td className="px-6 py-4 text-sm text-[#4D6A6D]">{report.type}</td>
+                <td className="px-6 py-4 text-sm text-[#4D6A6D]">{report.details}</td>
+                <td className="px-6 py-4 text-sm text-[#4D6A6D]">{report.status}</td>
               </tr>
             ))}
           </tbody>
@@ -121,19 +121,19 @@ const Report = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-8 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-slate-700">Create New Report</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
+              <h2 className="text-xl font-semibold text-[#4C5B61]">Create New Report</h2>
+              <button onClick={() => setShowModal(false)} className="text-[#949896] hover:text-[#4C5B61]">
                 <X size={24} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Report Type</label>
+                <label className="block text-sm font-medium text-[#4C5B61] mb-2">Report Type</label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                  className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D]"
                 >
                   <option value="review">Review</option>
                   <option value="profile-report">Profile Report</option>
@@ -143,12 +143,12 @@ const Report = () => {
 
               {formData.type === 'profile-report' && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Pseudoname of the user</label>
+                  <label className="block text-sm font-medium text-[#4C5B61] mb-2">Pseudoname of the user</label>
                   <input
                     type="text"
                     value={formData.profileId}
                     onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                    className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D]"
                     required
                   />
                 </div>
@@ -156,23 +156,24 @@ const Report = () => {
 
               {formData.type === 'chat-report' && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Chat ID</label>
+                  <label className="block text-sm font-medium text-[#4C5B61] mb-2">Chat ID</label>
                   <input
                     type="text"
                     value={formData.chatId}
                     onChange={(e) => setFormData({ ...formData, chatId: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                    className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D]"
                     required
                   />
                 </div>
               )}
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Details</label>
+                <label className="block text-sm font-medium text-[#4C5B61] mb-2">Details</label>
                 <textarea
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                   rows={4}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-sage-400"
+                  className="w-full px-4 py-3 border border-[#C5C5C5] rounded-lg focus:outline-none focus:border-[#4D6A6D]"
                   required
                 />
               </div>
@@ -181,13 +182,13 @@ const Report = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800"
+                  className="px-4 py-2 text-[#949896] hover:text-[#4C5B61]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-sage-500 text-white rounded-lg hover:bg-sage-600 transition-all duration-300"
+                  className="px-4 py-2 bg-[#4D6A6D] text-white rounded-lg hover:bg-[#829191] transition-all duration-300"
                 >
                   Submit Report
                 </button>

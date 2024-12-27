@@ -26,7 +26,7 @@ const CompanionText = () => {
 
         fetchQuestions();
     }, []);
-
+    
     // const questions = [
     // {
     //     question: "What is the primary purpose of active listening?",
@@ -237,15 +237,14 @@ const CompanionText = () => {
             [questionIndex]: optionIndex
         });
     };
+
     const makeUserCompanion = async (percentage) => {
         try {
             const token = localStorage.getItem('token');
             console.log(token);
-            const response = await axios.post('http://localhost:5000/companion', {percentage},{
+            const response = await axios.post('http://localhost:5000/companion', {percentage}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-
-
         } catch (error) {
             console.error('Error registering as companion:', error);
         }
@@ -269,16 +268,17 @@ const CompanionText = () => {
         setShowResult(true);
         setIsLoading(false);
     };
+
     const renderResultContent = () => {
         const percentage = ((score / questions.length) * 100).toFixed(2);
 
         if (percentage >= 70) {
             return (
                 <div className="text-center space-y-4">
-                    <h3 className="text-2xl text-green-600 font-bold">
+                    <h3 className="text-2xl font-bold" style={{ color: '#4D6A6D' }}>
                         Congratulations! 🎉
                     </h3>
-                    <p className="text-lg text-gray-700">
+                    <p className="text-lg" style={{ color: '#4C5B61' }}>
                         You've demonstrated excellent understanding and empathy skills.
                         You're ready to be a SoulSpeak companion!
                     </p>
@@ -286,17 +286,19 @@ const CompanionText = () => {
             );
         }
 
+
         return (
             <div className="text-center space-y-4">
-                <h3 className="text-xl text-amber-600 font-bold">
+                <h3 className="text-xl font-bold" style={{ color: '#4D6A6D' }}>
                     Keep Growing!
                 </h3>
-                <p className="text-lg text-gray-700">
+                <p className="text-lg" style={{ color: '#4C5B61' }}>
                     We see your potential! Enhance your skills with our training program.
                 </p>
                 <a
                     href="/training-program"
-                    className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-6 rounded-md transition-colors"
+                    className="inline-block text-white font-medium py-2 px-6 rounded-md transition-colors"
+                    style={{ backgroundColor: '#4D6A6D', hover: { backgroundColor: '#4C5B61' } }}
                 >
                     Join Training Program
                 </a>
@@ -305,49 +307,68 @@ const CompanionText = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-5">
-            {!showResult ? (
-                <>
-                    <h2 className="text-3xl font-bold text-center mb-8">SoulSpeak Companion Assessment</h2>
-                    <div className="space-y-6">
-                        {questions.map((q, qIndex) => (
-                            <div key={qIndex} className="bg-white rounded-lg shadow-md p-6">
-                                <h3 className="text-xl font-semibold mb-4">Question {qIndex + 1}</h3>
-                                <p className="text-gray-700 mb-4">{q.question}</p>
-                                <div className="space-y-3">
-                                    {[q.option1[0], q.option2[0], q.option3[0], q.option4[0]].map((option, oIndex) => (
-                                        <label
-                                            key={oIndex}
-                                            className="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-colors"
-                                        >
-                                            <input
-                                                type="radio"
-                                                name={`question-${qIndex}`}
-                                                checked={userAnswers[qIndex] === oIndex}
-                                                onChange={() => handleAnswer(qIndex, oIndex)}
-                                                className="form-radio h-4 w-4 text-blue-600"
-                                            />
-                                            <span className="text-gray-700">{option}</span>
-                                        </label>
-                                    ))}
+            <div className="max-w-4xl mx-auto p-5">
+                {!showResult ? (
+                    <>
+                        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: '#4D6A6D' }}>
+                            SoulSpeak Companion Assessment
+                        </h2>
+                        <div className="space-y-6">
+                            {questions.map((q, qIndex) => (
+                                <div key={qIndex} className="rounded-lg shadow-md p-6" style={{ backgroundColor: '#C5C5C5' }}>
+                                    <h3 className="text-xl font-semibold mb-4" style={{ color: '#4D6A6D' }}>
+                                        Question {qIndex + 1}
+                                    </h3>
+                                    <p className="mb-4" style={{ color: '#4C5B61' }}>
+                                        {q.question}
+                                    </p>
+                                    <div className="space-y-3">
+                                        {[q.option1[0], q.option2[0], q.option3[0], q.option4[0]].map((option, oIndex) => (
+                                            <label
+                                                key={oIndex}
+                                                className="flex items-center space-x-3 p-3 rounded-md cursor-pointer transition-colors"
+                                                style={{ 
+                                                    backgroundColor: '#829191',
+                                                    hover: { backgroundColor: '#949896' }
+                                                }}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name={`question-${qIndex}`}
+                                                    checked={userAnswers[qIndex] === oIndex}
+                                                    onChange={() => handleAnswer(qIndex, oIndex)}
+                                                    className="form-radio h-4 w-4"
+                                                    style={{ accentColor: '#4D6A6D' }}
+                                                />
+                                                <span style={{ color: '#4C5B61' }}>{option}</span>
+                                            </label>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                        <button
-                            onClick={handleSubmit}
-                            disabled={Object.keys(userAnswers).length !== questions.length || isLoading}
-                            className={`w-full py-3 px-6 rounded-md text-white font-medium transition-colors
-                                ${isLoading || Object.keys(userAnswers).length !== questions.length
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700'}`}
-                        >
-                            {isLoading ? 'Processing...' : 'Submit Test'}
-                        </button>
-                    </div>
-                </>
+                            ))}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={Object.keys(userAnswers).length !== questions.length || isLoading}
+                                className={`w-full py-3 px-6 rounded-md text-white font-medium transition-colors`}
+                                style={{
+                                    backgroundColor: isLoading || Object.keys(userAnswers).length !== questions.length
+                                        ? '#949896'
+                                        : '#4D6A6D',
+                                    cursor: isLoading || Object.keys(userAnswers).length !== questions.length
+                                        ? 'not-allowed'
+                                        : 'pointer',
+                                    hover: { backgroundColor: '#4C5B61' }
+                                }}
+                            >
+                                {isLoading ? 'Processing...' : 'Submit Test'}
+                            </button>
+                        </div>
+                    </>
             ) : (
-                <div className="bg-white rounded-lg shadow-md p-8">
-                    <h2 className="text-3xl font-bold mb-6">Your Assessment Results</h2>
+                <div className="rounded-lg shadow-md p-8" style={{ backgroundColor: '#C5C5C5' }}>
+                <h2 className="text-3xl font-bold mb-6" style={{ color: '#4D6A6D' }}>
+                    Your Assessment Results
+                </h2>
                     {/* <div className="mb-8">
                         <h3 className="text-2xl font-semibold mb-2">
                             Score: {score} out of {questions.length}

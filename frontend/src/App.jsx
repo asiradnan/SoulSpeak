@@ -63,8 +63,9 @@ const App = () => {
 
   return (
     <Router>
-      <nav className="bg-gradient-to-r from-sage-400 to-sage-500 p-4 shadow-sm">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
+<nav className="bg-gradient-to-r from-[#4D6A6D] to-[#4C5B61] p-4 shadow-sm">
+
+<div className="max-w-6xl mx-auto flex justify-between items-center">
           <div>
             <Link to="/" className="text-white text-2xl font-semibold hover:text-sage-100 transition-all duration-300">
               SoulSpeak ✨
