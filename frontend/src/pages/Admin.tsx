@@ -177,141 +177,76 @@ const Admin = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
-            <div className="w-64 bg-white shadow-lg">
-                <div className="p-4">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Admin Panel</h2>
-                    <nav className="space-y-2">
-                        <button
-                            onClick={() => setActiveTab('questions')}
-                            className={`w-full text-left px-4 py-2 rounded ${activeTab === 'questions'
-                                ? 'bg-blue-500 text-white'
-                                : 'hover:bg-gray-100'
+        <div className="flex min-h-screen bg-[#E8EAEB]">
+            {/* Sidebar */}
+            <div className="w-72 bg-[#4D6A6D] shadow-xl">
+                <div className="p-6">
+                    <h2 className="text-2xl font-bold text-white mb-8">Admin Panel</h2>
+                    <nav className="space-y-3">
+                        {['questions', 'users', 'reports', 'suspension'].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`w-full text-left px-5 py-3 rounded-lg transition-all duration-200 ${
+                                    activeTab === tab
+                                        ? 'bg-white text-[#4D6A6D] shadow-lg font-semibold'
+                                        : 'text-white hover:bg-[#5A7D80] hover:shadow-md'
                                 }`}
-                        >
-                            Questions Management
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('users')}
-                            className={`w-full text-left px-4 py-2 rounded ${activeTab === 'users'
-                                ? 'bg-blue-500 text-white'
-                                : 'hover:bg-gray-100'
-                                }`}
-                        >
-                            User Management
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('reports')}
-                            className={`w-full text-left px-4 py-2 rounded ${activeTab === 'reports'
-                                ? 'bg-blue-500 text-white'
-                                : 'hover:bg-gray-100'
-                                }`}
-                        >
-                            Reports Management
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('suspension')}
-                            className={`w-full text-left px-4 py-2 rounded ${activeTab === 'suspension'
-                                ? 'bg-blue-500 text-white'
-                                : 'hover:bg-gray-100'
-                                }`}
-                        >
-                            User Suspension
-                        </button>
+                            >
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)} Management
+                            </button>
+                        ))}
                     </nav>
                 </div>
             </div>
-
+    
+            {/* Main Content */}
             <div className="flex-1 p-8">
+                {/* Questions Tab */}
                 {activeTab === 'questions' && (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Questions Management</h1>
-                        <form onSubmit={handleSubmit} className="mb-8 space-y-4">
-                            <input
-                                type="text"
-                                name="question"
-                                placeholder="Question"
-                                value={formData.question}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="option1"
-                                placeholder="Option 1"
-                                value={formData.option1}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="option2"
-                                placeholder="Option 2"
-                                value={formData.option2}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="option3"
-                                placeholder="Option 3"
-                                value={formData.option3}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="option4"
-                                placeholder="Option 4"
-                                value={formData.option4}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="correct"
-                                placeholder="Correct Answer"
-                                value={formData.correct}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                name="resource"
-                                placeholder="Resource Link"
-                                value={formData.resource}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded"
-                            />
+                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">Questions Management</h1>
+                        <form onSubmit={handleSubmit} className="mb-8 space-y-4 bg-white p-6 rounded-xl shadow-md">
+                            {['question', 'option1', 'option2', 'option3', 'option4', 'correct', 'resource'].map((field) => (
+                                <input
+                                    key={field}
+                                    type="text"
+                                    name={field}
+                                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                    value={formData[field as keyof typeof formData]}
+                                    onChange={handleInputChange}
+                                    className="w-full p-3 border-2 border-[#CBD5E1] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white text-[#2C3E50] placeholder-[#94A3B8] transition-colors"
+                                />
+                            ))}
                             <button
                                 type="submit"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
                             >
                                 {editingId ? 'Update Question' : 'Add Question'}
                             </button>
                         </form>
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {questions.map((question) => (
-                                <div key={question._id} className="border p-4 rounded bg-white">
-                                    <h3 className="font-bold">{question.question}</h3>
-                                    <div className="ml-4">
-                                        <p>1. {question.option1}</p>
-                                        <p>2. {question.option2}</p>
-                                        <p>3. {question.option3}</p>
-                                        <p>4. {question.option4}</p>
-                                        <p>Answer: {question.correct}</p>
-                                        <p>Resource: {question.resource}</p>
+                                <div key={question._id} className="border-2 border-[#CBD5E1] p-6 rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-200">
+                                    <h3 className="text-xl font-bold text-[#2C3E50] mb-4">{question.question}</h3>
+                                    <div className="ml-4 text-[#4A5568] space-y-2">
+                                        <p className="font-medium">1. {question.option1}</p>
+                                        <p className="font-medium">2. {question.option2}</p>
+                                        <p className="font-medium">3. {question.option3}</p>
+                                        <p className="font-medium">4. {question.option4}</p>
+                                        <p className="font-semibold text-[#4D6A6D]">Answer: {question.correct}</p>
+                                        <p className="text-[#4D6A6D]">Resource: {question.resource}</p>
                                     </div>
-                                    <div className="mt-2 space-x-2">
+                                    <div className="mt-4 space-x-3">
                                         <button
                                             onClick={() => handleEdit(question)}
-                                            className="bg-yellow-500 text-white px-3 py-1 rounded"
+                                            className="bg-[#64748B] hover:bg-[#475569] text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => handleDelete(question._id)}
-                                            className="bg-red-500 text-white px-3 py-1 rounded"
+                                            className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
                                         >
                                             Delete
                                         </button>
@@ -321,76 +256,86 @@ const Admin = () => {
                         </div>
                     </>
                 )}
+    
+                {/* Users Tab */}
                 {activeTab === 'users' && (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">User Management</h1>
-                        <div className="bg-white shadow rounded-lg">
+                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">User Management</h1>
+                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] overflow-hidden">
                             <table className="min-w-full">
                                 <thead>
-                                    <tr className="bg-gray-50">
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <tr className="bg-[#F8FAFC]">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Username</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Email</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Role</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {users.map((user) => {
-                                        console.log(user.isCompanion)
-                                        return (
-                                            <tr key={user._id}>
-                                                <td className="px-6 py-4 whitespace-nowrap">{user.username}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{user.isCompanion ? "Companion" : "User"}</td>
-                                            </tr>
-                                        )
-                                    })}
+                                <tbody className="divide-y-2 divide-[#CBD5E1]">
+                                    {users.map((user) => (
+                                        <tr key={user._id} className="hover:bg-[#F8FAFC] transition-colors duration-150">
+                                            <td className="px-6 py-4 text-[#2C3E50] font-medium">{user.username}</td>
+                                            <td className="px-6 py-4 text-[#4A5568]">{user.email}</td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                    user.isCompanion 
+                                                        ? 'bg-[#4D6A6D] text-white' 
+                                                        : 'bg-[#CBD5E1] text-[#2C3E50]'
+                                                }`}>
+                                                    {user.isCompanion ? "Companion" : "User"}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </>
                 )}
+    
+                {/* Reports Tab */}
                 {activeTab === 'reports' && (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Reports Management</h1>
-                        <div className="bg-white shadow rounded-lg">
+                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">Reports Management</h1>
+                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] overflow-hidden">
                             <table className="min-w-full">
                                 <thead>
-                                    <tr className="bg-gray-50">
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <tr className="bg-[#F8FAFC]">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Email</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Type</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Details</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Time</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Status</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="divide-y-2 divide-[#CBD5E1]">
                                     {reports.map((report) => (
-                                        <tr key={report._id}>
-                                            <td className="px-6 py-4 whitespace-nowrap">{report.userEmail}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">{report.type}</td>
-                                            <td className="px-6 py-4">{report.details}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                        <tr key={report._id} className="hover:bg-[#F8FAFC] transition-colors duration-150">
+                                            <td className="px-6 py-4 text-[#2C3E50] font-medium">{report.userEmail}</td>
+                                            <td className="px-6 py-4 text-[#4A5568]">{report.type}</td>
+                                            <td className="px-6 py-4 text-[#4A5568]">{report.details}</td>
+                                            <td className="px-6 py-4 text-[#4A5568]">
                                                 {new Date(report.timestamp).toLocaleString()}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 py-1 rounded-full text-xs ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                    report.status === 'resolved' ? 'bg-green-100 text-green-800' :
-                                                        'bg-red-100 text-red-800'
-                                                    }`}>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                    report.status === 'pending' ? 'bg-[#FCD34D] text-[#92400E]' :
+                                                    report.status === 'resolved' ? 'bg-[#34D399] text-[#065F46]' :
+                                                    'bg-[#F87171] text-[#991B1B]'
+                                                }`}>
                                                     {report.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => handleUpdateStatus(report._id, 'resolved')}
-                                                    className="bg-green-500 text-white px-2 py-1 rounded mr-2"
+                                                    className="bg-[#34D399] hover:bg-[#059669] text-white px-3 py-2 rounded-lg mr-2 transition-colors duration-200 font-medium"
                                                 >
                                                     Resolve
                                                 </button>
                                                 <button
                                                     onClick={() => handleUpdateStatus(report._id, 'rejected')}
-                                                    className="bg-red-500 text-white px-2 py-1 rounded"
+                                                    className="bg-[#F87171] hover:bg-[#DC2626] text-white px-3 py-2 rounded-lg transition-colors duration-200 font-medium"
                                                 >
                                                     Reject
                                                 </button>
@@ -402,38 +347,42 @@ const Admin = () => {
                         </div>
                     </>
                 )}
+    
+                {/* Suspension Tab */}
                 {activeTab === 'suspension' && (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">User Suspension Management</h1>
-                        <div className="bg-white shadow rounded-lg p-6">
-                            <div className="flex gap-4 mb-6">
+                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">User Suspension Management</h1>
+                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] p-8">
+                            <div className="flex gap-4 mb-8">
                                 <input
                                     type="email"
                                     value={searchEmail}
                                     onChange={(e) => setSearchEmail(e.target.value)}
                                     placeholder="Enter user email"
-                                    className="flex-1 p-2 border rounded"
+                                    className="flex-1 p-3 border-2 border-[#CBD5E1] rounded-lg focus:outline-none focus:border-[#4D6A6D] text-[#2C3E50] placeholder-[#94A3B8] transition-colors"
                                 />
                                 <button
                                     onClick={checkSuspensionStatus}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                                    className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
                                 >
                                     Check Status
                                 </button>
                             </div>
-
+    
                             {suspensionStatus && (
-                                <div className="mt-4">
-                                    <div className="mb-4">
-                                        <p className="font-semibold">Status for {suspensionStatus.email}:</p>
-                                        <p className={`mt-2 ${suspensionStatus.isSuspended ? 'text-red-600' : 'text-green-600'}`}>
+                                <div className="mt-6 p-6 bg-[#F8FAFC] rounded-lg border-2 border-[#CBD5E1]">
+                                    <div className="mb-6">
+                                        <p className="text-lg font-semibold text-[#2C3E50] mb-2">Status for {suspensionStatus.email}:</p>
+                                        <p className={`text-lg font-bold ${
+                                            suspensionStatus.isSuspended ? 'text-[#DC2626]' : 'text-[#059669]'
+                                        }`}>
                                             {suspensionStatus.isSuspended ? 'Suspended' : 'Active'}
                                         </p>
                                     </div>
-                                    <div className="space-y-4">
+                                    <div>
                                         <button
                                             onClick={handleSuspendUser}
-                                            className="bg-red-500 text-white px-4 py-2 rounded"
+                                            className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
                                         >
                                             Suspend User
                                         </button>
@@ -443,8 +392,6 @@ const Admin = () => {
                         </div>
                     </>
                 )}
-
-
             </div>
         </div>
     );

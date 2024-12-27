@@ -20,7 +20,6 @@ const ResetPassword = () => {
     }
 
     try {
-        console.log(token)
       const response = await axios.post(`http://localhost:5000/confirm-reset-password`, {
         password, 
         token
@@ -36,59 +35,73 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-slate-700 mb-6 text-center">Reset Password</h2>
-      
-      {message && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
-          {message}
-        </div>
-      )}
-      
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-slate-700 mb-2" htmlFor="password">
-            New Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sage-500"
-            required
-            minLength={4}
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-slate-700 mb-2" htmlFor="confirmPassword">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sage-500"
-            required
-            minLength={4}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-sage-500 text-white py-2 px-4 rounded hover:bg-sage-600 transition-colors duration-300"
-        >
+    <div className="min-h-screen flex items-center justify-center py-12 px-4" style={{ backgroundColor: '#C5C5C5' }}>
+      <div className="max-w-md w-full space-y-8 p-10 rounded-2xl shadow-xl" style={{ backgroundColor: 'white' }}>
+        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: '#4D6A6D' }}>
           Reset Password
-        </button>
-      </form>
+        </h2>
+        
+        {message && (
+          <div className="p-4 rounded-xl text-center mb-6" style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>
+            {message}
+          </div>
+        )}
+        
+        {error && (
+          <div className="p-4 rounded-xl text-center mb-6" style={{ backgroundColor: '#ffebee', color: '#c62828' }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#4D6A6D' }}>
+              New Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
+              style={{ 
+                border: '1px solid #829191',
+                backgroundColor: 'white'
+              }}
+              required
+              minLength={4}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: '#4D6A6D' }}>
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
+              style={{ 
+                border: '1px solid #829191',
+                backgroundColor: 'white'
+              }}
+              required
+              minLength={4}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl font-medium mt-8 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+            style={{ 
+              backgroundColor: '#4D6A6D',
+              color: 'white'
+            }}
+          >
+            Reset Password
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

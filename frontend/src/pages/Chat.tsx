@@ -15,7 +15,7 @@ interface User {
     _id: string;
     username: string;
     isOnline?: boolean;
-    isCompanion: boolean; // Add this field
+    isCompanion: boolean;
 }
 
 interface Chat {
@@ -39,11 +39,12 @@ const Chat: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [typingStatus, setTypingStatus] = useState<TypingStatus | null>(null);
+    const [showCompanions, setShowCompanions] = useState(false);
+    const [companions, setCompanions] = useState<User[]>([]);
     const socket = useRef<any>();
     const messageEndRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout>();
-    const [showCompanions, setShowCompanions] = useState(false);
-    const [companions, setCompanions] = useState<User[]>([]);
+    const currentChatRef = useRef<Chat | null>(null);
 
     const fetchCompanions = async () => {
         try {
@@ -95,7 +96,6 @@ const Chat: React.FC = () => {
 
     }, [currentChat?.messages]);
 
-    const currentChatRef = useRef<Chat | null>(null);
 
 useEffect(() => {
     currentChatRef.current = currentChat; // Keep the ref updated
@@ -254,16 +254,16 @@ useEffect(() => {
 
     if (isLoading) {
         return (
-            <div className="flex h-screen items-center justify-center">
-                <Loader className="w-8 h-8 animate-spin text-blue-500" />
+            <div className="flex h-screen items-center justify-center bg-[#4C5B61]">
+                <Loader className="w-8 h-8 animate-spin text-[#C5C5C5]" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="flex h-screen items-center justify-center">
-                <div className="flex items-center space-x-2 text-red-500">
+            <div className="flex h-screen items-center justify-center bg-[#4C5B61]">
+                <div className="flex items-center space-x-2 text-[#C5C5C5]">
                     <AlertCircle className="w-5 h-5" />
                     <span>{error}</span>
                 </div>
@@ -272,31 +272,30 @@ useEffect(() => {
     }
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-[#2C3E50]">
             {/* Chat list */}
-            <div className="w-1/3 border-r bg-white overflow-y-auto">
-                <div className="p-4 border-b">
-                    <h2 className="text-xl font-semibold">Chats</h2>
+            <div className="w-1/3 border-r border-[#7F8C8D] bg-[#34495E] overflow-y-auto">
+                <div className="p-4 border-b border-[#7F8C8D]">
+                    <h2 className="text-xl font-semibold text-[#ECF0F1]">Chats</h2>
                     {currentUser && !currentUser.isCompanion && (
                         <button
                             onClick={() => {
                                 setShowCompanions(true);
                                 fetchCompanions();
                             }}
-                            className="mt-2 w-full py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                            className="mt-2 w-full py-2 px-4 bg-[#1ABC9C] text-white rounded-lg hover:bg-[#16A085] transition-colors"
                         >
                             Find Companions
                         </button>
                     )}
                 </div>
-                {/* Show companions list or chats */}
                 {showCompanions ? (
                     <div className="p-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Available Companions</h3>
+                            <h3 className="text-lg font-semibold text-[#ECF0F1]">Available Companions</h3>
                             <button
                                 onClick={() => setShowCompanions(false)}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-[#ECF0F1] hover:text-[#BDC3C7]"
                             >
                                 Back to Chats
                             </button>
@@ -304,13 +303,13 @@ useEffect(() => {
                         {companions.map(companion => (
                             <div
                                 key={companion._id}
-                                className="p-4 border-b hover:bg-gray-50 cursor-pointer"
+                                className="p-4 border-b border-[#7F8C8D] hover:bg-[#2C3E50] cursor-pointer transition-colors"
                                 onClick={() => startCompanionChat(companion._id)}
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-medium">{companion.username}</p>
-                                        <p className="text-sm text-gray-500">Companion</p>
+                                        <p className="font-medium text-[#ECF0F1]">{companion.username}</p>
+                                        <p className="text-sm text-[#BDC3C7]">Companion</p>
                                     </div>
                                     {companion.isOnline && (
                                         <span className="w-3 h-3 bg-green-500 rounded-full"></span>
@@ -327,23 +326,23 @@ useEffect(() => {
                         return (
                             <div
                                 key={chat._id}
-                                onClick={() => {
-                                    console.log(chat._id)
-                                    setCurrentChat(chat)
-                                }}
-                                className={`p-4 hover:bg-gray-50 cursor-pointer border-b ${currentChat?._id === chat._id ? 'bg-gray-50' : ''
-                                    }`}
+                                onClick={() => setCurrentChat(chat)}
+                                className={`p-4 hover:bg-[#2C3E50] cursor-pointer border-b border-[#7F8C8D] transition-colors ${
+                                    currentChat?._id === chat._id ? 'bg-[#2C3E50]' : ''
+                                }`}
                             >
                                 <div className="flex justify-between items-center">
-                                    <span className="font-medium">{otherParticipant?.username}</span>
+                                    <span className="font-medium text-[#ECF0F1]">
+                                        {otherParticipant?.username}
+                                    </span>
                                     {chat.lastMessage && (
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-[#BDC3C7]">
                                             {format(new Date(chat.lastMessage.timestamp || Date.now()), 'HH:mm')}
                                         </span>
                                     )}
                                 </div>
                                 {chat.lastMessage && (
-                                    <p className="text-sm text-gray-500 truncate">
+                                    <p className="text-sm text-[#BDC3C7] truncate">
                                         {chat.lastMessage.content}
                                     </p>
                                 )}
@@ -352,14 +351,13 @@ useEffect(() => {
                     })
                 )}
             </div>
-
-
+    
             {/* Chat messages */}
-            <div className="w-2/3 flex flex-col bg-white">
+            <div className="w-2/3 flex flex-col bg-[#34495E]">
                 {currentChat ? (
                     <>
-                        <div className="p-4 border-b">
-                            <h3 className="text-lg font-semibold">
+                        <div className="p-4 border-b border-[#7F8C8D]">
+                            <h3 className="text-lg font-semibold text-[#ECF0F1]">
                                 {currentChat.participants.find(
                                     p => p._id !== currentUser?._id
                                 )?.username}
@@ -369,50 +367,48 @@ useEffect(() => {
                             {currentChat.messages.map(msg => (
                                 <div
                                     key={msg._id}
-                                    className={`my-2 max-w-[70%] ${msg.sender === currentUser?._id
-                                        ? 'ml-auto'
-                                        : ''
-                                        }`}
+                                    className={`my-2 max-w-[70%] ${
+                                        msg.sender === currentUser?._id ? 'ml-auto' : ''
+                                    }`}
                                 >
                                     <div
-                                        className={`p-3 rounded-lg ${msg.sender === currentUser?._id
-                                            ? 'bg-blue-500 text-white'
-                                            : 'bg-gray-200'
-                                            }`}
+                                        className={`p-3 rounded-lg ${
+                                            msg.sender === currentUser?._id
+                                                ? 'bg-[#1ABC9C] text-white'
+                                                : 'bg-[#2C3E50] text-[#ECF0F1]'
+                                        }`}
                                     >
                                         {msg.content}
                                     </div>
                                     <div
-                                        className={`text-xs text-gray-500 mt-1 ${msg.sender === currentUser?._id
-                                            ? 'text-right'
-                                            : ''
-                                            }`}
+                                        className={`text-xs text-[#BDC3C7] mt-1 ${
+                                            msg.sender === currentUser?._id ? 'text-right' : ''
+                                        }`}
                                     >
                                         {format(new Date(msg.timestamp || Date.now()), 'HH:mm')}
-
                                     </div>
                                 </div>
                             ))}
                             {typingStatus && typingStatus.chatId === currentChat._id && (
-                                <div className="text-sm text-gray-500 italic">
+                                <div className="text-sm text-[#BDC3C7] italic">
                                     {typingStatus.username} is typing...
                                 </div>
                             )}
                             <div ref={messageEndRef} />
                         </div>
-                        <form onSubmit={sendMessage} className="p-4 border-t">
+                        <form onSubmit={sendMessage} className="p-4 border-t border-[#7F8C8D]">
                             <div className="flex space-x-2">
                                 <input
                                     type="text"
                                     value={message}
                                     onChange={handleMessageInput}
-                                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="flex-1 p-2 border border-[#7F8C8D] rounded-lg bg-[#2C3E50] text-[#ECF0F1] placeholder-[#BDC3C7] focus:outline-none focus:ring-2 focus:ring-[#1ABC9C]"
                                     placeholder="Type a message..."
                                 />
                                 <button
                                     type="submit"
                                     disabled={!message.trim()}
-                                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                                    className="p-2 bg-[#1ABC9C] text-white rounded-lg hover:bg-[#16A085] disabled:opacity-50 transition-colors"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
@@ -420,13 +416,14 @@ useEffect(() => {
                         </form>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-500">
+                    <div className="flex-1 flex items-center justify-center text-[#BDC3C7]">
                         Select a chat to start messaging
                     </div>
                 )}
             </div>
         </div>
     );
+    
 };
 
 export default Chat;
