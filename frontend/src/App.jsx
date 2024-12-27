@@ -63,18 +63,16 @@ const App = () => {
 
   return (
     <Router>
-<nav className="bg-gradient-to-r from-[#4D6A6D] to-[#4C5B61] p-4 shadow-sm">
+      <nav className="bg-gradient-to-r from-[#4D6A6D] to-[#4C5B61] p-4 shadow-sm">
 
-<div className="max-w-6xl mx-auto flex justify-between items-center">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div>
             <Link to="/" className="text-white text-2xl font-semibold hover:text-sage-100 transition-all duration-300">
               SoulSpeak ✨
             </Link>
           </div>
           <div className="space-x-8">
-            <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
-              <span className="hover:-translate-y-0.5 inline-block transform">Become A Companion</span>
-            </Link>
+
             {!isLoggedIn ? (
               <>
                 <Link to="/login" className="text-white hover:text-sage-100 transition-all duration-300">
@@ -89,6 +87,9 @@ const App = () => {
               <>
                 <Link to="/chat" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Chat</span>
+                </Link>
+                <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
+                  <span className="hover:-translate-y-0.5 inline-block transform">Become A Companion</span>
                 </Link>
                 <Link to="/forum" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Forum</span>
