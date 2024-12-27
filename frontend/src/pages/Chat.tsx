@@ -360,7 +360,7 @@ useEffect(() => {
                             <h3 className="text-lg font-semibold text-[#ECF0F1]">
                                 {currentChat.participants.find(
                                     p => p._id !== currentUser?._id
-                                )?.username}
+                                )?.username} <span className='text-xs'>(Chat ID: {currentChat._id})</span>
                             </h3>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4">

@@ -85,11 +85,11 @@ const App = () => {
               </>
             ) : (
               <>
+              <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
+                  <span className="hover:-translate-y-0.5 inline-block transform">Become A Companion</span>
+                </Link>
                 <Link to="/chat" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Chat</span>
-                </Link>
-                <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
-                  <span className="hover:-translate-y-0.5 inline-block transform">Become A Companion</span>
                 </Link>
                 <Link to="/forum" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Forum</span>
