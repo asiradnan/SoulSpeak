@@ -1,5 +1,5 @@
 import express from "express"
-import { signup, login, profile, updateProfile, getPosts, createPost, updatePost, deletePost, upvotePost, addComment, getComments, deleteComment, getReports, createReport, companion, companions, verifyEmail, confirmEmail, sendPasswordResetEmail, resetPassword, questions} from "../controllers/All.js"
+import { signup, login, profile, updateProfile, getPosts, createPost, updatePost, deletePost, upvotePost, addComment, getComments, deleteComment, getReports, createReport, companion, companions, verifyEmail, confirmEmail, sendPasswordResetEmail, resetPassword, questions, uploadProfilePicture, getProfilePicture} from "../controllers/All.js"
 import { authenticateToken } from "../config/middlewares.js"
 
 const router = express.Router()
@@ -32,5 +32,7 @@ router.post('/confirm-reset-password', resetPassword)
 
 router.get('/questions',authenticateToken, questions)
 
+router.post('/upload-profile-picture', authenticateToken, uploadProfilePicture);
+router.get('/profile-picture', authenticateToken, getProfilePicture);
 
 export default router

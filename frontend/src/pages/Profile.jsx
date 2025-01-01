@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { set } from "mongoose";
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+
+
     const [formData, setFormData] = useState({
         name: "",
         username: "",
@@ -19,6 +24,37 @@ const Profile = () => {
         goals: "",
         preferences: ""
     });
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setProfilePicture(file);
+
+        // Create preview
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleProfilePictureUpload = async () => {
+        const token = localStorage.getItem("token");
+        const formData = new FormData();
+        formData.append('image', profilePicture);
+
+        try {
+            const response = await axios.post("http://localhost:5000/upload-profile-picture", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setProfile({ ...profile, imageUrl: response.data.imageUrl });
+        } catch (err) {
+            setError("Failed to upload profile picture");
+        }
+    };
     const handleVerifyEmail = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -60,9 +96,11 @@ const Profile = () => {
                     password: "",
                     newPassword: "",
                 });
-                console.log(user);
-                console.log(formData);
                 setError(null);
+                const response2 = await axios.get("http://localhost:5000/profile-picture", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setProfilePicture(`http://localhost:5000${response2.data.imageUrl}`);
             } catch (err) {
                 setError("Failed to load profile. Please log in again.");
             } finally {
@@ -85,6 +123,9 @@ const Profile = () => {
             const response = await axios.put("http://localhost:5000/profile", formData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+            if (profilePicture) {
+                await handleProfilePictureUpload();
+            }
             setProfile(response.data.user);
             console.log(response.data.user);
             setIsEditing(false);
@@ -108,11 +149,27 @@ const Profile = () => {
                 </div>
             )}
             <div className="text-center">
-                {/* <img
-                    src="https://via.placeholder.com/150"
-                    alt="Profile"
-                    className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-sage-100"
-                /> */}
+                <div className="relative inline-block w-32 h-32 mb-6">
+                    <img
+                        src={imagePreview || profilePicture || "https://via.placeholder.com/150"}
+                        alt="Profile"
+                        className="w-32 h-32 rounded-full border-4 border-sage-100 object-cover"
+                    />
+
+                    {isEditing && (
+                        <label className="absolute bottom-2 right-2 bg-[#4D6A6D] p-2 rounded-full cursor-pointer hover:bg-[#829191] transition-all duration-300 ease-in-out z-10">
+                            <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </label>
+                    )}
+                </div>
                 {!isEditing ? (
                     <>
                         <h3 className="text-xl font-semibold text-[#4D6A6D]">{profile.name}</h3>

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import Post from '../models/Post.js';
 import Report from '../models/Report.js';
 import Question from "../models/questionModel.js";
+import ProfilePicture from "../models/profilePicture.js";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import path from 'path';
@@ -299,6 +300,56 @@ export const updateProfile = async (req, res) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+export const uploadProfilePicture = async (req, res) => {
+    try {
+        const uploadResult = await new Promise((resolve, reject) => {
+            upload.single('image')(req, res, (err) => {
+                if (err) reject(err);
+                resolve(req.file);
+            });
+        });
+
+        if (!uploadResult) {
+            return res.status(400).json({ message: 'No image file provided' });
+        }
+
+        const imageUrl = `/uploads/${uploadResult.filename}`;
+        
+        // Update user's profile picture
+        const profilePic = await ProfilePicture.findOneAndUpdate(
+            { user: req.user.id },
+            { imageUrl: imageUrl },
+            { upsert: true, new: true }
+        );
+
+        res.status(200).json({ 
+            message: 'Profile picture updated successfully',
+            imageUrl: imageUrl 
+        });
+
+    } catch (error) {
+        console.error('Profile picture upload error:', error);
+        res.status(500).json({ message: 'Error uploading profile picture' });
+    }
+};
+export const getProfilePicture = async (req, res) => {
+    try {
+        const profilePic = await ProfilePicture.findOne({ user: req.user.id });
+        
+        if (!profilePic) {
+            console.log('No profile picture found for user:', req.user.id);
+            return res.status(200).json({ imageUrl: null });
+        }
+
+        res.status(200).json({ imageUrl: profilePic.imageUrl });
+        
+    } catch (error) {
+        console.error('Error fetching profile picture:', error);
+        res.status(500).json({ message: 'Error fetching profile picture' });
+    }
+};
+
 
 export const createPost = async (req, res) => {
     console.log("Received request to create post");
