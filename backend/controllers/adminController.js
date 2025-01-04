@@ -1,7 +1,15 @@
 import User from "../models/userModel.js";
 import Question from "../models/questionModel.js";
 import Report from "../models/Report.js";
+import nodemailer from 'nodemailer';
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 export async function get_all_questions(request, response) {
     try {
@@ -135,6 +143,23 @@ export async function suspend(request, response) {
         console.error("Error suspending/unsuspending user:", error);
     }
 }
+export async function activate(request, response) {
+    try {
+        const admin = await User.findById(request.user.id);
+        if (!admin) {
+            return response.status(401).json({ message: "Admin not found." });
+        }
+        const { email, reason } = request.body;
+        await User.findOneAndUpdate(
+            { email },
+            { suspended: false },
+            { new: true }
+        );
+        return response.status(200).json({ message:  'suspended successfully.'});
+    } catch (error) {
+        console.error("Error suspending/unsuspending user:", error);
+    }
+}
 
 export async function isSuspended(request, response) {
     try {
@@ -160,7 +185,6 @@ export const updateReportStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
         
-        // Validate status
         if (!['resolved', 'rejected'].includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
@@ -174,7 +198,34 @@ export const updateReportStatus = async (req, res) => {
         if (!updatedReport) {
             return res.status(404).json({ message: "Report not found" });
         }
-        console.log("Report status updated successfully");
+        // Send email notification
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+        const emailContent = {
+            from: process.env.EMAIL,
+            to: updatedReport.userEmail,
+            subject: `Your Report Status Update - SoulSpeak`,
+            html: `
+                <h2>Report Status Update</h2>
+                <p>Your report has been marked as ${status}.</p>
+                <p>Report Details:</p>
+                <ul>
+                    <li>Type: ${updatedReport.type}</li>
+                    <li>Submitted: ${updatedReport.timestamp}</li>
+                    <li>Current Status: ${status}</li>
+                </ul>
+                <p>Thank you for helping us maintain the quality of SoulSpeak.</p>
+            `
+        };
+        console.log(emailContent)
+
+        await transporter.sendMail(emailContent);
+        console.log("Report status updated and email sent successfully");
         res.status(200).json(updatedReport);
     } catch (error) {
         res.status(500).json({ message: "Error updating report status", error: error.message });

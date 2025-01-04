@@ -278,10 +278,78 @@ const Forum = () => {
                         <p className="text-sm font-medium">Your Wellness Journey</p>
                     </div>
 
-                    {/* Update the colors in the menu items */}
                     <div className="text-white text-sm">
-                        {/* ... existing menu items code ... */}
-                        {/* Update button hover states to use #829191 */}
+                        {[
+                            {
+                                label: 'Daily Reflections',
+                                icon: Brain,
+                                color: 'bg-purple-600',
+                                hoverColor: 'hover:bg-purple-500',
+                                subItems: [
+                                    { name: 'Morning Journal', url: 'https://www.youtube.com/watch?v=MXXs9JC_ItQ' },
+                                    { name: 'Evening Check-in', url: 'https://www.youtube.com/watch?v=ncy-I0Ag710' }
+                                ]
+                            },
+                            {
+                                label: 'Guided Practices',
+                                icon: Heart,
+                                color: 'bg-pink-600',
+                                hoverColor: 'hover:bg-pink-500',
+                                subItems: [
+                                    { name: 'Meditation Guide', url: 'https://www.youtube.com/watch?v=vj0JDwQLof4' },
+                                    { name: 'Breathing Tutorial', url: 'https://www.youtube.com/watch?v=LiUnFJ8P4gM' }
+                                ]
+                            },
+                            {
+                                label: 'Mood Tracker',
+                                icon: SmilePlus,
+                                color: 'bg-orange-600',
+                                hoverColor: 'hover:bg-orange-500',
+                                subItems: [
+                                    { name: 'Track Your Mood', url: 'https://youtube.com/watch?v=mood-tracking' },
+                                    { name: 'Emotional Wellness', url: 'https://youtube.com/watch?v=emotional-health' }
+                                ]
+                            },
+                            {
+                                label: 'Progress Path',
+                                icon: Cloud,
+                                color: 'bg-blue-600',
+                                hoverColor: 'hover:bg-blue-500',
+                                subItems: [
+                                    { name: 'Goal Setting Guide', url: 'https://youtube.com/watch?v=goal-setting' },
+                                    { name: 'Success Habits', url: 'https://youtube.com/watch?v=daily-habits' }
+                                ]
+                            }
+                        ].map((item) => (
+                            <div key={item.label}>
+                                <button
+                                    onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                                    className={`w-full p-2 text-left border-b border-teal-600 hover:bg-teal-600 flex justify-between items-center transition-colors ${item.color}`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <item.icon size={16} />
+                                        {item.label}
+                                    </div>
+                                    <ChevronDown size={14} className={`transform transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`} />
+                                </button>
+                                {openDropdown === item.label && (
+                                    <div className={`${item.color}`}>
+                                        {item.subItems.map((subItem) => (
+                                            <a
+                                                key={subItem.name}
+                                                href={subItem.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={`w-full p-2 pl-8 text-left ${item.hoverColor} text-sm transition-colors flex items-center gap-2 cursor-pointer`}
+                                            >
+                                                {subItem.name}
+                                                <LinkIcon size={12} className="inline" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -296,16 +364,52 @@ const Forum = () => {
                         </div>
                         <div className="flex-1">
                             <textarea
+                                value={postText}
+                                onChange={(e) => setPostText(e.target.value)}
                                 className="w-full p-4 rounded-lg border border-[#C5C5C5] focus:border-[#4D6A6D] focus:ring-1 focus:ring-[#4D6A6D] resize-none"
                                 placeholder="Share your thoughts with the community..."
                                 rows={3}
-                                value={postText}
-                                onChange={(e) => setPostText(e.target.value)}
                             />
-                            
-                            {/* Image preview and buttons */}
+                            {imagePreview && (
+                                <div className="mt-2 relative">
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="max-h-48 rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            setSelectedImage(null);
+                                            setImagePreview(null);
+                                        }}
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            )}
                             <div className="flex justify-between mt-4">
                                 <div className="flex gap-4">
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleImageUpload}
+                                        accept="image/*"
+                                        className="hidden"
+                                    />
+                                    <div className="mt-4">
+                                        <select
+                                            value={postCategory}
+                                            onChange={(e) => setPostCategory(e.target.value)}
+                                            className="w-full p-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                                        >
+                                            {categories.map(category => (
+                                                <option key={category} value={category}>
+                                                    {category}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <button
                                         onClick={triggerFileInput}
                                         className="flex items-center gap-2 text-[#4D6A6D] hover:text-[#829191]"
@@ -313,13 +417,19 @@ const Forum = () => {
                                         <Image size={18} />
                                         Photo
                                     </button>
-                                    <button className="flex items-center gap-2 text-[#4D6A6D] hover:text-[#829191]">
+                                    {selectedImage && (
+                                        <span className="text-sm text-teal-600">
+                                            {selectedImage.name}
+                                        </span>
+                                    )}
+                                    {/* <button className="flex items-center gap-2 text-teal-700 hover:text-teal-800">
                                         <LinkIcon size={18} />
                                         Link
-                                    </button>
+                                    </button> */}
                                 </div>
-                                <button 
+                                <button
                                     onClick={handlePost}
+                                    disabled={isLoading}
                                     className="bg-[#4D6A6D] text-white px-6 py-2 rounded-lg hover:bg-[#829191] transition-colors disabled:opacity-50"
                                 >
                                     {isLoading ? 'Posting...' : 'Post'}
@@ -345,8 +455,6 @@ const Forum = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    
-                                    {/* Edit/Delete buttons */}
                                     {String(post.author._id) === String(currentUser?._id) && (
                                         <div className="flex gap-2">
                                             <button
@@ -355,13 +463,13 @@ const Forum = () => {
                                                     setEditContent(post.content);
                                                     setEditImagePreview(post.imageUrl ? `http://localhost:5000${post.imageUrl}` : null);
                                                 }}
-                                                className="text-[#4D6A6D] hover:text-[#829191]"
+                                                className="text-teal-600 hover:text-teal-800"
                                             >
                                                 <Pencil size={18} />
                                             </button>
                                             <button
                                                 onClick={() => handleDeletePost(post._id)}
-                                                className="text-[#4D6A6D] hover:text-[#829191]"
+                                                className="text-red-600 hover:text-red-800"
                                             >
                                                 <Trash2 size={18} />
                                             </button>
@@ -369,49 +477,172 @@ const Forum = () => {
                                     )}
                                 </div>
 
-                                {/* Post content */}
-                                <p className="mb-3 text-[#4C5B61]">{post.content}</p>
-                                
-                                {/* Interaction buttons */}
+                                {editingPost === post._id ? (
+                                    <div className="space-y-2">
+                                        <textarea
+                                            value={editContent}
+                                            onChange={(e) => setEditContent(e.target.value)}
+                                            className="w-full p-2 border rounded-lg"
+                                            rows={3}
+                                        />
+                                        {/* Current image preview */}
+                                        {(post.imageUrl || editImagePreview) && (
+                                            <div className="mt-2 relative">
+                                                <img
+                                                    src={editImagePreview || `http://localhost:5000${post.imageUrl}`}
+                                                    alt="Preview"
+                                                    className="max-h-48 rounded-lg"
+                                                />
+                                                <button
+                                                    onClick={() => {
+                                                        setEditImagePreview(null);
+                                                        setEditSelectedImage(null);
+                                                        if (editFileInputRef.current) {
+                                                            editFileInputRef.current.value = '';
+                                                        }
+                                                        // Add this line to ensure the post's original image is also cleared from UI
+                                                        const updatedPost = posts.find(p => p._id === editingPost);
+                                                        if (updatedPost) {
+                                                            updatedPost.imageUrl = '';
+                                                        }
+                                                    }}
+                                                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        )}
+                                        {/* Image upload controls */}
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="file"
+                                                ref={editFileInputRef}
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        setEditSelectedImage(file);
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            setEditImagePreview(reader.result as string);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                }}
+                                                accept="image/*"
+                                                className="hidden"
+                                            />
+                                            <button
+                                                onClick={() => editFileInputRef.current?.click()}
+                                                className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                                            >
+                                                {post.imageUrl || editImagePreview ? "Replace Image" : "Add Image"}
+                                            </button>
+                                        </div>
+                                        <div className="flex gap-2 justify-end">
+                                            <button
+                                                onClick={() => {
+                                                    setEditingPost(null);
+                                                    setEditImagePreview(null);
+                                                    setEditSelectedImage(null);
+                                                }}
+                                                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                onClick={() => handleEditPost(post._id, editContent)}
+                                                className="px-3 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700"
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="mb-3">{post.content}</p>
+                                        {post.imageUrl && (
+                                            <img
+                                                src={`http://localhost:5000${post.imageUrl}`}
+                                                alt="Post attachment"
+                                                className="rounded-lg w-full"
+                                            />
+                                        )}
+                                    </>
+                                )}
                                 <div className="flex items-center gap-4 mt-4">
                                     <button
                                         onClick={() => handleUpvote(post._id)}
-                                        className={`flex items-center gap-1 ${
-                                            post.upvotes.includes(currentUser?._id)
-                                                ? 'text-[#4D6A6D]'
-                                                : 'text-[#949896]'
-                                        }`}
+                                        className={`flex items-center gap-1 ${post.upvotes.includes(currentUser?._id)
+                                            ? 'text-teal-600'
+                                            : 'text-gray-500'
+                                            }`}
                                     >
                                         <ThumbsUp size={18} />
                                         <span>{post.upvotes.length}</span>
                                     </button>
                                     <button
                                         onClick={() => setActiveCommentPost(activeCommentPost === post._id ? null : post._id)}
-                                        className="flex items-center gap-1 text-[#949896] hover:text-[#4D6A6D]"
+                                        className="flex items-center gap-1 text-gray-500 hover:text-teal-600"
                                     >
                                         <MessageCircle size={18} />
                                         <span>{post.comments.length}</span>
                                     </button>
                                 </div>
+                                {activeCommentPost === post._id && (
+                                    <div className="mt-4">
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={commentText}
+                                                onChange={(e) => setCommentText(e.target.value)}
+                                                className="flex-1 p-2 border rounded-lg focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                                                placeholder="Write a comment..."
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    handleComment(post._id, commentText);
+                                                    setCommentText('');
+                                                    setActiveCommentPost(null);
+                                                }}
+                                                className="bg-teal-700 text-white px-4 py-2 rounded-lg hover:bg-teal-800"
+                                            >
+                                                Comment
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Comments section */}
                                 <div className="bg-[#C5C5C5]/10 p-3 rounded mt-4">
-                                    {post.comments.map((comment, index) => (
-                                        <div key={index} className="bg-white p-3 rounded mb-2">
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-[#4D6A6D] rounded-full" />
-                                                    <div>
-                                                        <span className="font-medium text-[#4C5B61]">{comment.user.username}</span>
-                                                        <span className="text-xs text-[#949896] ml-2">
-                                                            {new Date(comment.createdAt).toLocaleDateString()}
-                                                        </span>
+                                    {post.comments.map((comment, index) => {
+                                        console.log('Comment user ID:', comment.user);
+                                        console.log('Current user ID:', currentUser?._id);
+                                        console.log('Are they equal?:', comment.user === currentUser?._id);
+                                        return (
+                                            <div key={index} className="bg-gray-50 p-3 rounded">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-8 h-8 bg-[#4D6A6D] rounded-full" />
+                                                        <div>
+                                                            <span className="font-medium text-[#4C5B61]">{comment.user.username}</span>
+                                                            <span className="text-xs text-[#949896] ml-2">
+                                                                {new Date(comment.createdAt).toLocaleDateString()}
+                                                            </span>
+                                                        </div>
                                                     </div>
+                                                    {String(comment.user) === String(currentUser?._id) && (
+                                                        <button
+                                                            onClick={() => handleDeleteComment(post._id, comment._id)}
+                                                            className="text-red-600 hover:text-red-800"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    )}
                                                 </div>
+                                                <p className="mt-2 text-sm text-[#4C5B61]">{comment.content}</p>
                                             </div>
-                                            <p className="mt-2 text-sm text-[#4C5B61]">{comment.content}</p>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             </div>
                         ))}
@@ -425,22 +656,21 @@ const Forum = () => {
                     <div className="space-y-2">
                         <button
                             onClick={() => setSelectedCategory('all')}
-                            className={`w-full text-left p-2 rounded-lg text-sm transition-colors ${
-                                selectedCategory === 'all'
+                            className={`w-full text-left p-2 rounded-lg text-sm transition-colors ${selectedCategory === 'all'
                                     ? 'bg-[#4D6A6D] text-white'
                                     : 'hover:bg-[#C5C5C5]/20 text-[#4C5B61]'
-                            }`}
+                                }`}
                         >
                             All Posts
                         </button>
                         {categories.map(category => (
                             <button
                                 key={category}
-                                className={`w-full text-left p-2 rounded-lg text-sm transition-colors ${
-                                    selectedCategory === category
-                                        ? 'bg-[#4D6A6D] text-white'
-                                        : 'hover:bg-[#C5C5C5]/20 text-[#4C5B61]'
-                                }`}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`w-full text-left p-2 rounded-lg text-sm transition-colors ${selectedCategory === category
+                                    ? 'bg-[#4D6A6D] text-white'
+                                    : 'hover:bg-[#C5C5C5]/20 text-[#4C5B61]'
+                                    }`}
                             >
                                 {category}
                             </button>
@@ -453,7 +683,6 @@ const Forum = () => {
                     <img src="/api/placeholder/300/200" alt="Community illustration" className="rounded-lg w-full" />
                 </div>
 
-                {/* Action buttons */}
                 <button className="w-full bg-[#4D6A6D] text-white p-2 rounded-lg hover:bg-[#829191] flex justify-between items-center text-sm">
                     My Communities
                     <ChevronDown size={14} />

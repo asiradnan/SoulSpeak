@@ -215,6 +215,9 @@ export async function login(request, response) {
         if (!user) {
             return response.status(401).json({ message: "Invalid email or password." });
         }
+        if (user.suspended) {
+            return response.status(403).json({ message: "Your account has been suspended." });
+        }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return response.status(401).json({ message: "Invalid email or password." });
@@ -547,7 +550,16 @@ export const deleteComment = async (req, res) => {
 
 export const getReports = async (req, res) => {
     try {
-        const reports = await Report.find();
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (user.email == "admin@gmail.com") {
+            const reports = await Report.find();
+            return res.status(200).json(reports);
+        }
+        const reports = await Report.find({userEmail: user.email});
+
         res.status(200).json(reports);
     } catch (error) {
         res.status(500).json({ message: error.message });

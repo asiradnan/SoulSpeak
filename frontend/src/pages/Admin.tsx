@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 interface Question {
     _id: string;
@@ -62,6 +64,41 @@ const Admin = () => {
         setReports(response.data);
     };
 
+    const generatePDF = () => {
+        const doc = new jsPDF();
+
+        // Add title
+        doc.setFontSize(16);
+        doc.text('Reports Summary', 14, 15);
+
+        // Define the table columns and rows
+        const tableColumn = ["Email", "Type", "Details", "Time", "Status"];
+        const tableRows = reports.map(report => [
+            report.userEmail,
+            report.type,
+            report.details,
+            new Date(report.timestamp).toLocaleString(),
+            report.status
+        ]);
+
+        // Generate the table
+        (doc as any).autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 25,
+            styles: { fontSize: 8 },
+            columnStyles: {
+                0: { cellWidth: 40 },
+                1: { cellWidth: 30 },
+                2: { cellWidth: 50 },
+                3: { cellWidth: 35 },
+                4: { cellWidth: 25 }
+            }
+        });
+
+        // Save the PDF
+        doc.save('reports.pdf');
+    };
     useEffect(() => {
         if (activeTab === 'questions') {
             fetchQuestions();
@@ -80,6 +117,19 @@ const Admin = () => {
             { headers: { Authorization: `Bearer ${token}` } }
         );
         fetchReports();
+    };
+    const handleActivateUser = async () => {
+        const token = localStorage.getItem("token");
+        try {
+            await axios.post(`http://localhost:5000/admin/activate`, {
+                email: searchEmail,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            checkSuspensionStatus();
+        } catch (error) {
+            console.error('Error activating user:', error);
+        }
     };
 
     const fetchQuestions = async () => {
@@ -187,11 +237,10 @@ const Admin = () => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`w-full text-left px-5 py-3 rounded-lg transition-all duration-200 ${
-                                    activeTab === tab
+                                className={`w-full text-left px-5 py-3 rounded-lg transition-all duration-200 ${activeTab === tab
                                         ? 'bg-white text-[#4D6A6D] shadow-lg font-semibold'
                                         : 'text-white hover:bg-[#5A7D80] hover:shadow-md'
-                                }`}
+                                    }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)} Management
                             </button>
@@ -199,7 +248,7 @@ const Admin = () => {
                     </nav>
                 </div>
             </div>
-    
+
             {/* Main Content */}
             <div className="flex-1 p-8">
                 {/* Questions Tab */}
@@ -256,7 +305,7 @@ const Admin = () => {
                         </div>
                     </>
                 )}
-    
+
                 {/* Users Tab */}
                 {activeTab === 'users' && (
                     <>
@@ -276,11 +325,10 @@ const Admin = () => {
                                             <td className="px-6 py-4 text-[#2C3E50] font-medium">{user.username}</td>
                                             <td className="px-6 py-4 text-[#4A5568]">{user.email}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                    user.isCompanion 
-                                                        ? 'bg-[#4D6A6D] text-white' 
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.isCompanion
+                                                        ? 'bg-[#4D6A6D] text-white'
                                                         : 'bg-[#CBD5E1] text-[#2C3E50]'
-                                                }`}>
+                                                    }`}>
                                                     {user.isCompanion ? "Companion" : "User"}
                                                 </span>
                                             </td>
@@ -291,11 +339,20 @@ const Admin = () => {
                         </div>
                     </>
                 )}
-    
+
                 {/* Reports Tab */}
                 {activeTab === 'reports' && (
                     <>
+
                         <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">Reports Management</h1>
+                        <div className="flex justify-end mb-4">
+                            <button
+                                onClick={generatePDF}
+                                className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                            >
+                                Generate PDF Report
+                            </button>
+                        </div>
                         <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] overflow-hidden">
                             <table className="min-w-full">
                                 <thead>
@@ -318,11 +375,10 @@ const Admin = () => {
                                                 {new Date(report.timestamp).toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                    report.status === 'pending' ? 'bg-[#FCD34D] text-[#92400E]' :
-                                                    report.status === 'resolved' ? 'bg-[#34D399] text-[#065F46]' :
-                                                    'bg-[#F87171] text-[#991B1B]'
-                                                }`}>
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${report.status === 'pending' ? 'bg-[#FCD34D] text-[#92400E]' :
+                                                        report.status === 'resolved' ? 'bg-[#34D399] text-[#065F46]' :
+                                                            'bg-[#F87171] text-[#991B1B]'
+                                                    }`}>
                                                     {report.status}
                                                 </span>
                                             </td>
@@ -347,7 +403,7 @@ const Admin = () => {
                         </div>
                     </>
                 )}
-    
+
                 {/* Suspension Tab */}
                 {activeTab === 'suspension' && (
                     <>
@@ -368,24 +424,32 @@ const Admin = () => {
                                     Check Status
                                 </button>
                             </div>
-    
-                            {suspensionStatus && (
+
+                            { suspensionStatus && (
                                 <div className="mt-6 p-6 bg-[#F8FAFC] rounded-lg border-2 border-[#CBD5E1]">
                                     <div className="mb-6">
                                         <p className="text-lg font-semibold text-[#2C3E50] mb-2">Status for {suspensionStatus.email}:</p>
-                                        <p className={`text-lg font-bold ${
-                                            suspensionStatus.isSuspended ? 'text-[#DC2626]' : 'text-[#059669]'
-                                        }`}>
+                                        <p className={`text-lg font-bold ${suspensionStatus.isSuspended ? 'text-[#DC2626]' : 'text-[#059669]'
+                                            }`}>
                                             {suspensionStatus.isSuspended ? 'Suspended' : 'Active'}
                                         </p>
                                     </div>
-                                    <div>
-                                        <button
-                                            onClick={handleSuspendUser}
-                                            className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
-                                        >
-                                            Suspend User
-                                        </button>
+                                    <div className="space-x-4">
+                                        {!suspensionStatus.isSuspended ? (
+                                            <button
+                                                onClick={handleSuspendUser}
+                                                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                            >
+                                                Suspend User
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={handleActivateUser}
+                                                className="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                            >
+                                                Activate User
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             )}

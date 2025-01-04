@@ -48,10 +48,16 @@ const Home = () => {
 };
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState(null)
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       const token = localStorage.getItem('token')
-      setIsLoggedIn(!!token)
+      if (token) {
+        const response = await axios.get("http://localhost:5000/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(response.data.user);
+      }
     }, 500)
 
     return () => clearInterval(interval)
@@ -59,12 +65,12 @@ const App = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
+    window.location.href = '/login';
   }
 
   return (
     <Router>
       <nav className="bg-gradient-to-r from-[#4D6A6D] to-[#4C5B61] p-4 shadow-sm">
-
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div>
             <Link to="/" className="text-white text-2xl font-semibold hover:text-sage-100 transition-all duration-300">
@@ -73,7 +79,7 @@ const App = () => {
           </div>
           <div className="space-x-8">
 
-            {!isLoggedIn ? (
+            {!user ? (
               <>
                 <Link to="/login" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Login</span>
@@ -85,9 +91,11 @@ const App = () => {
               </>
             ) : (
               <>
-              <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
+                {user && !user.isCompanion && (
+                <Link to="/become-a-companion" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Become A Companion</span>
                 </Link>
+                )}
                 <Link to="/chat" className="text-white hover:text-sage-100 transition-all duration-300">
                   <span className="hover:-translate-y-0.5 inline-block transform">Chat</span>
                 </Link>
