@@ -163,7 +163,8 @@ export async function activate(request, response) {
 
 export async function isSuspended(request, response) {
     try {
-        const user = await User.findOne({ email: request.params.email });
+        const email = request.params.email;
+        const user = await User.findOne({ email: email });
         const admin = await User.findById(request.user.id);
         if (!admin) {
             return response.status(401).json({ message: "Admin not found." });

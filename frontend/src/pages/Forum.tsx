@@ -157,6 +157,7 @@ const Forum = () => {
     const triggerFileInput = () => {
         fileInputRef.current?.click();
     };
+    
     const handleEditPost = async (postId: string, content: string) => {
         try {
             const token = localStorage.getItem('token');
@@ -422,10 +423,6 @@ const Forum = () => {
                                             {selectedImage.name}
                                         </span>
                                     )}
-                                    {/* <button className="flex items-center gap-2 text-teal-700 hover:text-teal-800">
-                                        <LinkIcon size={18} />
-                                        Link
-                                    </button> */}
                                 </div>
                                 <button
                                     onClick={handlePost}
