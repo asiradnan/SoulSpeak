@@ -30,8 +30,22 @@ const chatSocket = (io) => {
                     socket.leave(chatId);
                 });
 
+                // Handle typing events
+                socket.on('typing', ({ chatId, username }) => {
+                    socket.to(chatId).emit('typing', { chatId, username, userId });
+                });
+
+                socket.on('stopTyping', ({ chatId }) => {
+                    socket.to(chatId).emit('stopTyping', { chatId, userId });
+                });
+
+                // Emit user online status
+                io.emit('userOnline', { userId });
+
                 socket.on('disconnect', () => {
                     console.log('User disconnected:', socket.id);
+                    // Emit user offline status
+                    io.emit('userOffline', { userId });
                 });
             } catch (error) {
                 console.error('Invalid token:', error);

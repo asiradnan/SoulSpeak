@@ -228,19 +228,19 @@ const Admin = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#E8EAEB]">
+        <div className="flex min-h-screen bg-gray-50">
             {/* Sidebar */}
-            <div className="w-72 bg-[#4D6A6D] shadow-xl">
+            <div className="w-72 bg-white shadow-lg border-r border-gray-200">
                 <div className="p-6">
-                    <h2 className="text-2xl font-bold text-white mb-8">Admin Panel</h2>
-                    <nav className="space-y-3">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-8">Admin Panel</h2>
+                    <nav className="space-y-2">
                         {['questions', 'users', 'reports', 'suspension'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`w-full text-left px-5 py-3 rounded-lg transition-all duration-200 ${activeTab === tab
-                                        ? 'bg-white text-[#4D6A6D] shadow-lg font-semibold'
-                                        : 'text-white hover:bg-[#5A7D80] hover:shadow-md'
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${activeTab === tab
+                                        ? 'bg-blue-600 text-white shadow-sm font-medium'
+                                        : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)} Management
@@ -255,8 +255,8 @@ const Admin = () => {
                 {/* Questions Tab */}
                 {activeTab === 'questions' && (
                     <>
-                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">Questions Management</h1>
-                        <form onSubmit={handleSubmit} className="mb-8 space-y-4 bg-white p-6 rounded-xl shadow-md">
+                        <h1 className="text-3xl font-bold mb-8 text-gray-800">Questions Management</h1>
+                        <form onSubmit={handleSubmit} className="mb-8 space-y-4 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                             {['question', 'option1', 'option2', 'option3', 'option4', 'correct', 'resource'].map((field) => (
                                 <input
                                     key={field}
@@ -265,38 +265,38 @@ const Admin = () => {
                                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                                     value={formData[field as keyof typeof formData]}
                                     onChange={handleInputChange}
-                                    className="w-full p-3 border-2 border-[#CBD5E1] rounded-lg focus:outline-none focus:border-[#4D6A6D] bg-white text-[#2C3E50] placeholder-[#94A3B8] transition-colors"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-800 placeholder-gray-400"
                                 />
                             ))}
                             <button
                                 type="submit"
-                                className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium shadow-sm"
                             >
                                 {editingId ? 'Update Question' : 'Add Question'}
                             </button>
                         </form>
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             {questions.map((question) => (
-                                <div key={question._id} className="border-2 border-[#CBD5E1] p-6 rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-200">
-                                    <h3 className="text-xl font-bold text-[#2C3E50] mb-4">{question.question}</h3>
-                                    <div className="ml-4 text-[#4A5568] space-y-2">
+                                <div key={question._id} className="border border-gray-200 p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+                                    <h3 className="text-xl font-bold text-gray-800 mb-4">{question.question}</h3>
+                                    <div className="ml-4 text-gray-700 space-y-2">
                                         <p className="font-medium">1. {question.option1}</p>
                                         <p className="font-medium">2. {question.option2}</p>
                                         <p className="font-medium">3. {question.option3}</p>
                                         <p className="font-medium">4. {question.option4}</p>
-                                        <p className="font-semibold text-[#4D6A6D]">Answer: {question.correct}</p>
-                                        <p className="text-[#4D6A6D]">Resource: {question.resource}</p>
+                                        <p className="font-semibold text-blue-600">Answer: {question.correct}</p>
+                                        <p className="text-gray-600">Resource: {question.resource}</p>
                                     </div>
                                     <div className="mt-4 space-x-3">
                                         <button
                                             onClick={() => handleEdit(question)}
-                                            className="bg-[#64748B] hover:bg-[#475569] text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => handleDelete(question._id)}
-                                            className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
                                         >
                                             Delete
                                         </button>
@@ -310,25 +310,25 @@ const Admin = () => {
                 {/* Users Tab */}
                 {activeTab === 'users' && (
                     <>
-                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">User Management</h1>
-                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] overflow-hidden">
+                        <h1 className="text-3xl font-bold mb-8 text-gray-800">User Management</h1>
+                        <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
                             <table className="min-w-full">
                                 <thead>
-                                    <tr className="bg-[#F8FAFC]">
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Username</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Email</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Role</th>
+                                    <tr className="bg-gray-50">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Username</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Email</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Role</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y-2 divide-[#CBD5E1]">
+                                <tbody className="divide-y divide-gray-200">
                                     {users.map((user) => (
-                                        <tr key={user._id} className="hover:bg-[#F8FAFC] transition-colors duration-150">
-                                            <td className="px-6 py-4 text-[#2C3E50] font-medium">{user.username}</td>
-                                            <td className="px-6 py-4 text-[#4A5568]">{user.email}</td>
+                                        <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <td className="px-6 py-4 text-gray-800 font-medium">{user.username}</td>
+                                            <td className="px-6 py-4 text-gray-600">{user.email}</td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.isCompanion
-                                                        ? 'bg-[#4D6A6D] text-white'
-                                                        : 'bg-[#CBD5E1] text-[#2C3E50]'
+                                                        ? 'bg-blue-600 text-white'
+                                                        : 'bg-gray-200 text-gray-800'
                                                     }`}>
                                                     {user.isCompanion ? "Companion" : "User"}
                                                 </span>
@@ -345,40 +345,40 @@ const Admin = () => {
                 {activeTab === 'reports' && (
                     <>
 
-                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">Reports Management</h1>
+                        <h1 className="text-3xl font-bold mb-8 text-gray-800">Reports Management</h1>
                         <div className="flex justify-end mb-4">
                             <button
                                 onClick={generatePDF}
-                                className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium shadow-sm"
                             >
                                 Generate PDF Report
                             </button>
                         </div>
-                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] overflow-hidden">
+                        <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
                             <table className="min-w-full">
                                 <thead>
-                                    <tr className="bg-[#F8FAFC]">
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Email</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Type</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Details</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Time</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Status</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-[#2C3E50] uppercase tracking-wider border-b-2 border-[#CBD5E1]">Actions</th>
+                                    <tr className="bg-gray-50">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Email</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Type</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Details</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Time</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Status</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider border-b border-gray-200">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y-2 divide-[#CBD5E1]">
+                                <tbody className="divide-y divide-gray-200">
                                     {reports.map((report) => (
-                                        <tr key={report._id} className="hover:bg-[#F8FAFC] transition-colors duration-150">
-                                            <td className="px-6 py-4 text-[#2C3E50] font-medium">{report.userEmail}</td>
-                                            <td className="px-6 py-4 text-[#4A5568]">{report.type}</td>
-                                            <td className="px-6 py-4 text-[#4A5568]">{report.details}</td>
-                                            <td className="px-6 py-4 text-[#4A5568]">
+                                        <tr key={report._id} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <td className="px-6 py-4 text-gray-800 font-medium">{report.userEmail}</td>
+                                            <td className="px-6 py-4 text-gray-600">{report.type}</td>
+                                            <td className="px-6 py-4 text-gray-600">{report.details}</td>
+                                            <td className="px-6 py-4 text-gray-600">
                                                 {new Date(report.timestamp).toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${report.status === 'pending' ? 'bg-[#FCD34D] text-[#92400E]' :
-                                                        report.status === 'resolved' ? 'bg-[#34D399] text-[#065F46]' :
-                                                            'bg-[#F87171] text-[#991B1B]'
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                        report.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                                                            'bg-red-100 text-red-800'
                                                     }`}>
                                                     {report.status}
                                                 </span>
@@ -386,13 +386,13 @@ const Admin = () => {
                                             <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => handleUpdateStatus(report._id, 'resolved')}
-                                                    className="bg-[#34D399] hover:bg-[#059669] text-white px-3 py-2 rounded-lg mr-2 transition-colors duration-200 font-medium"
+                                                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg mr-2 transition-colors duration-200 font-medium"
                                                 >
                                                     Resolve
                                                 </button>
                                                 <button
                                                     onClick={() => handleUpdateStatus(report._id, 'rejected')}
-                                                    className="bg-[#F87171] hover:bg-[#DC2626] text-white px-3 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 font-medium"
                                                 >
                                                     Reject
                                                 </button>
@@ -408,29 +408,29 @@ const Admin = () => {
                 {/* Suspension Tab */}
                 {activeTab === 'suspension' && (
                     <>
-                        <h1 className="text-3xl font-bold mb-8 text-[#2C3E50]">User Suspension Management</h1>
-                        <div className="bg-white shadow-md rounded-xl border-2 border-[#CBD5E1] p-8">
+                        <h1 className="text-3xl font-bold mb-8 text-gray-800">User Suspension Management</h1>
+                        <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-8">
                             <div className="flex gap-4 mb-8">
                                 <input
                                     type="email"
                                     value={searchEmail}
                                     onChange={(e) => setSearchEmail(e.target.value)}
                                     placeholder="Enter user email"
-                                    className="flex-1 p-3 border-2 border-[#CBD5E1] rounded-lg focus:outline-none focus:border-[#4D6A6D] text-[#2C3E50] placeholder-[#94A3B8] transition-colors"
+                                    className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 placeholder-gray-400"
                                 />
                                 <button
                                     onClick={checkSuspensionStatus}
-                                    className="bg-[#4D6A6D] hover:bg-[#3D5457] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium shadow-sm"
                                 >
                                     Check Status
                                 </button>
                             </div>
 
                             { suspensionStatus && (
-                                <div className="mt-6 p-6 bg-[#F8FAFC] rounded-lg border-2 border-[#CBD5E1]">
+                                <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
                                     <div className="mb-6">
-                                        <p className="text-lg font-semibold text-[#2C3E50] mb-2">Status for {suspensionStatus.email}:</p>
-                                        <p className={`text-lg font-bold ${suspensionStatus.isSuspended ? 'text-[#DC2626]' : 'text-[#059669]'
+                                        <p className="text-lg font-semibold text-gray-800 mb-2">Status for {suspensionStatus.email}:</p>
+                                        <p className={`text-lg font-bold ${suspensionStatus.isSuspended ? 'text-red-600' : 'text-green-600'
                                             }`}>
                                             {suspensionStatus.isSuspended ? 'Suspended' : 'Active'}
                                         </p>
@@ -439,14 +439,14 @@ const Admin = () => {
                                         {!suspensionStatus.isSuspended ? (
                                             <button
                                                 onClick={handleSuspendUser}
-                                                className="bg-[#DC2626] hover:bg-[#B91C1C] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium shadow-sm"
                                             >
                                                 Suspend User
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={handleActivateUser}
-                                                className="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3 rounded-lg transition-colors duration-200 font-semibold shadow-md hover:shadow-lg"
+                                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium shadow-sm"
                                             >
                                                 Activate User
                                             </button>

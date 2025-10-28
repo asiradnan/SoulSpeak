@@ -62,11 +62,17 @@ export async function sendMessage(req, res) {
           sender: userId,
           content
       });
+      
+      // Update lastMessage and lastMessageTime
+      chat.lastMessage = content;
+      chat.lastMessageTime = new Date();
+      
       const savedChat = await chat.save();
 
-      // Get populated chat data
+      // Get populated chat data with sender information
       const populatedChat = await Chat.findById(chatId)
-          .populate('participants', 'username email isOnline isCompanion');
+          .populate('participants', 'username email isOnline isCompanion')
+          .populate('messages.sender', 'username profilePicture');
 
       const io = req.app.get('io');
 
@@ -97,8 +103,9 @@ export async function getChats(req, res) {
     const chats = await Chat.find({
       participants: userId
     })
-      .populate('participants', 'username email')
-      .sort({ lastMessage: -1 });
+      .populate('participants', 'username email isOnline isCompanion')
+      .populate('messages.sender', 'username profilePicture')
+      .sort({ lastMessageTime: -1 });
 
     res.status(200).json(chats);
   } catch (error) {
