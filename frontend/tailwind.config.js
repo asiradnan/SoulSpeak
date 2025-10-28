@@ -6,14 +6,84 @@ export default {
   theme: {
     extend: {
       colors: {
-        soulspeak: {
-          primary: '#4D6A6D',
-          secondary: '#4C5B61',
-          gray: '#949896',
-          light: '#829191',
-          lighter: '#C5C5C5'
+        primary: {
+          50: '#f0f7f7',
+          100: '#deeeed',
+          200: '#c1dedd',
+          300: '#9ac7c6',
+          400: '#6fa9a8',
+          500: '#4D6A6D',
+          600: '#416063',
+          700: '#374e51',
+          800: '#2f4143',
+          900: '#2a3839',
+        },
+        secondary: {
+          50: '#f5f7f7',
+          100: '#e8ebeb',
+          200: '#d4d9da',
+          300: '#b3bbbf',
+          400: '#8a969b',
+          500: '#4C5B61',
+          600: '#3f4d52',
+          700: '#364145',
+          800: '#2f373a',
+          900: '#2a3133',
+        },
+        accent: {
+          50: '#f0f9f4',
+          100: '#dcf2e4',
+          200: '#bce4cd',
+          300: '#8cd0ad',
+          400: '#56b388',
+          500: '#359469',
+          600: '#267754',
+          700: '#1f5f44',
+          800: '#1c4c38',
+          900: '#183f2f',
+        },
+        neutral: {
+          50: '#f8f9f9',
+          100: '#f0f2f2',
+          200: '#e2e6e6',
+          300: '#cbd2d2',
+          400: '#a8b3b3',
+          500: '#829191',
+          600: '#6d7b7b',
+          700: '#5a6565',
+          800: '#4c5454',
+          900: '#424848',
+        },
+        sage: {
+          50: '#f6f8f7',
+          100: '#e9efed',
+          200: '#d5dedd',
+          300: '#b5c4c1',
+          400: '#91a5a1',
+          500: '#748885',
+          600: '#5d6e6b',
+          700: '#4d5a58',
+          800: '#414b49',
+          900: '#38403e',
         }
-      }
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'system-ui', 'sans-serif'],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+        'medium': '0 4px 20px -2px rgba(0, 0, 0, 0.1), 0 10px 25px -5px rgba(0, 0, 0, 0.04)',
+        'strong': '0 10px 40px -5px rgba(0, 0, 0, 0.2), 0 15px 30px -5px rgba(0, 0, 0, 0.1)',
+      },
     }
   },
   plugins: [],
