@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config/api';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -109,7 +110,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/signup', formData);
+      const response = await axios.post(`${API_URL}/signup`, formData);
       if (response.status === 201) {
         setSuccess('You joined our community!');
         setTimeout(() => {

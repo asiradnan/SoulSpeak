@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config/api";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ const Login = () => {
         setError(null);
 
         try {
-            const response = await axios.post("http://localhost:5000/login", formData);
+            const response = await axios.post(`${API_URL}/login`, formData);
             if (response.status === 200) {
                 localStorage.setItem("token", response.data.token);
                 navigate("/");
@@ -38,7 +39,7 @@ const Login = () => {
 
     const handleResetSubmit = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/reset-password", { email: resetEmail });
+            const response = await axios.post(`${API_URL}/reset-password`, { email: resetEmail });
             if (response.status === 200) {
                 alert("Password reset email sent. Please check your inbox!");
                 setShowEmailPopup(false);

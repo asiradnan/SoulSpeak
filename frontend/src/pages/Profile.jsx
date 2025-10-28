@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { set } from "mongoose";
+import API_URL from "../config/api";
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -44,7 +45,7 @@ const Profile = () => {
         formData.append('image', profilePicture);
 
         try {
-            const response = await axios.post("http://localhost:5000/upload-profile-picture", formData, {
+            const response = await axios.post(`${API_URL}/upload-profile-picture`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -58,7 +59,7 @@ const Profile = () => {
     const handleVerifyEmail = async () => {
         const token = localStorage.getItem("token");
         try {
-            await axios.post("http://localhost:5000/verify-email", {}, {
+            await axios.post(`${API_URL}/verify-email`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setError(null);
@@ -78,7 +79,7 @@ const Profile = () => {
 
         const fetchProfile = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/profile", {
+                const response = await axios.get(`${API_URL}/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const user = response.data.user;
@@ -97,10 +98,10 @@ const Profile = () => {
                     newPassword: "",
                 });
                 setError(null);
-                const response2 = await axios.get("http://localhost:5000/profile-picture", {
+                const response2 = await axios.get(`${API_URL}/profile-picture`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setProfilePicture(`http://localhost:5000${response2.data.imageUrl}`);
+                setProfilePicture(`${API_URL}${response2.data.imageUrl}`);
             } catch (err) {
                 setError("Failed to load profile. Please log in again.");
             } finally {
@@ -120,7 +121,7 @@ const Profile = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.put("http://localhost:5000/profile", formData, {
+            const response = await axios.put(`${API_URL}/profile`, formData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (profilePicture) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, X } from 'lucide-react';
+import API_URL from '../config/api';
 
 interface Report {
   _id: string;
@@ -24,7 +25,7 @@ const Report = () => {
   const fetchUserEmail = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:5000/profile", {
+      const response = await axios.get(`${API_URL}/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserEmail(response.data.user.email);
@@ -36,7 +37,7 @@ const Report = () => {
   const fetchReports = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:5000/reports", {
+      const response = await axios.get(`${API_URL}/reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReports(response.data);
@@ -57,7 +58,7 @@ const Report = () => {
     }
   
     try {
-      await axios.post("http://localhost:5000/reports", {
+      await axios.post(`${API_URL}/reports`, {
         type: formData.type,
         details: enhancedDetails,
         userEmail: userEmail

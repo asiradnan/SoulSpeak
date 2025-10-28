@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import API_URL from '../config/api';
 
 interface Question {
     _id: string;
@@ -58,7 +59,7 @@ const Admin = () => {
 
     const fetchReports = async () => {
         const token = localStorage.getItem("token");
-        const response = await axios.get('http://localhost:5000/reports', {
+        const response = await axios.get(`${API_URL}/reports`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setReports(response.data);
@@ -112,7 +113,7 @@ const Admin = () => {
     const handleUpdateStatus = async (reportId: string, newStatus: 'resolved' | 'rejected') => {
         const token = localStorage.getItem("token");
         await axios.patch(
-            `http://localhost:5000/admin/reports/${reportId}/status`,
+            `${API_URL}/admin/reports/${reportId}/status`,
             { status: newStatus },
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -121,7 +122,7 @@ const Admin = () => {
     const handleActivateUser = async () => {
         const token = localStorage.getItem("token");
         try {
-            await axios.post(`http://localhost:5000/admin/activate`, {
+            await axios.post(`${API_URL}/admin/activate`, {
                 email: searchEmail,
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -133,13 +134,13 @@ const Admin = () => {
     };
 
     const fetchQuestions = async () => {
-        const response = await axios.get('http://localhost:5000/admin/questions');
+        const response = await axios.get(`${API_URL}/admin/questions`);
         setQuestions(response.data);
     };
 
     const fetchUsers = async () => {
         const token = localStorage.getItem("token");
-        const response = await axios.get('http://localhost:5000/admin/users', {
+        const response = await axios.get(`${API_URL}/admin/users`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(response.data);
@@ -157,11 +158,11 @@ const Admin = () => {
         const token = localStorage.getItem("token");
 
         if (editingId) {
-            await axios.put(`http://localhost:5000/admin/questions/${editingId}`, formData, {
+            await axios.put(`${API_URL}/admin/questions/${editingId}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } else {
-            await axios.post('http://localhost:5000/admin/questions', formData, {
+            await axios.post(`${API_URL}/admin/questions`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
         }
@@ -180,7 +181,7 @@ const Admin = () => {
 
     const handleDelete = async (id: string) => {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/admin/questions/${id}`, {
+        await axios.delete(`${API_URL}/admin/questions/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         fetchQuestions();
@@ -202,7 +203,7 @@ const Admin = () => {
         console.log('Checking suspension status for:', searchEmail);
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.get(`http://localhost:5000/admin/suspension/${searchEmail}`, {
+            const response = await axios.get(`${API_URL}/admin/suspension/${searchEmail}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log(response.data);
@@ -215,7 +216,7 @@ const Admin = () => {
     const handleSuspendUser = async () => {
         const token = localStorage.getItem("token");
         try {
-            await axios.post(`http://localhost:5000/admin/suspend`, {
+            await axios.post(`${API_URL}/admin/suspend`, {
                 email: searchEmail,
             }, {
                 headers: { Authorization: `Bearer ${token}` }

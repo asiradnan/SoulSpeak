@@ -1,6 +1,7 @@
 import { MailQuestion } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config/api';
 
 const TrainingProgram = () => {
     const [questions, setQuestions] = useState([]);
@@ -9,7 +10,7 @@ const TrainingProgram = () => {
         const fetchQuestions = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/questions', {
+                const response = await axios.get(`${API_URL}/questions`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setQuestions(response.data);

@@ -19,6 +19,7 @@ import {
     ThumbsUp,
     MessageCircle
 } from 'lucide-react';
+import API_URL from '../config/api';
 
 
 interface Post {
@@ -73,7 +74,7 @@ const Forum = () => {
     const handleUpvote = async (postId: string) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:5000/posts/${postId}/upvote`, {}, {
+            await axios.post(`${API_URL}/posts/${postId}/upvote`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchPosts();
@@ -85,7 +86,7 @@ const Forum = () => {
     const handleComment = async (postId: string, content: string) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:5000/posts/${postId}/comments`,
+            await axios.post(`${API_URL}/posts/${postId}/comments`,
                 { content },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -98,7 +99,7 @@ const Forum = () => {
 
     const fetchPosts = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/posts');
+            const response = await axios.get(`${API_URL}/posts`);
             console.log('Fetched posts:', response.data);
             setPosts(response.data);
         } catch (error) {
@@ -120,7 +121,7 @@ const Forum = () => {
                 formData.append('image', selectedImage);
             }
 
-            await axios.post('http://localhost:5000/posts', formData, {
+            await axios.post(`${API_URL}/posts`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -174,7 +175,7 @@ const Forum = () => {
                 formData.append('removeImage', 'true');
             }
 
-            await axios.put(`http://localhost:5000/posts/${postId}`, formData, {
+            await axios.put(`${API_URL}/posts/${postId}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -201,7 +202,7 @@ const Forum = () => {
         if (window.confirm('Are you sure you want to delete this post?')) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:5000/posts/${postId}`, {
+                await axios.delete(`${API_URL}/posts/${postId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchPosts();
@@ -213,7 +214,7 @@ const Forum = () => {
     const handleDeleteComment = async (postId: string, commentId: string) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/posts/${postId}/comments/${commentId}`, {
+            await axios.delete(`${API_URL}/posts/${postId}/comments/${commentId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchPosts();
@@ -231,7 +232,7 @@ const Forum = () => {
                 console.log('Fetching user...');
                 const token = localStorage.getItem('token');
                 console.log('Token:', token);
-                const response = await axios.get('http://localhost:5000/profile', {
+                const response = await axios.get(`${API_URL}/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setCurrentUser(response.data.user);
@@ -458,7 +459,7 @@ const Forum = () => {
                                                 onClick={() => {
                                                     setEditingPost(post._id);
                                                     setEditContent(post.content);
-                                                    setEditImagePreview(post.imageUrl ? `http://localhost:5000${post.imageUrl}` : null);
+                                                    setEditImagePreview(post.imageUrl ? `${API_URL}${post.imageUrl}` : null);
                                                 }}
                                                 className="text-teal-600 hover:text-teal-800"
                                             >
@@ -486,7 +487,7 @@ const Forum = () => {
                                         {(post.imageUrl || editImagePreview) && (
                                             <div className="mt-2 relative">
                                                 <img
-                                                    src={editImagePreview || `http://localhost:5000${post.imageUrl}`}
+                                                    src={editImagePreview || `${API_URL}${post.imageUrl}`}
                                                     alt="Preview"
                                                     className="max-h-48 rounded-lg"
                                                 />
@@ -559,7 +560,7 @@ const Forum = () => {
                                         <p className="mb-3">{post.content}</p>
                                         {post.imageUrl && (
                                             <img
-                                                src={`http://localhost:5000${post.imageUrl}`}
+                                                src={`${API_URL}${post.imageUrl}`}
                                                 alt="Post attachment"
                                                 className="rounded-lg w-full"
                                             />

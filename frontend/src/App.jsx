@@ -12,6 +12,7 @@ import Chat from './pages/Chat'
 import ResetPassword from './pages/ResetPassword'
 
 import axios from 'axios'
+import API_URL from './config/api'
 
 
 const Home = () => {
@@ -53,7 +54,7 @@ const App = () => {
     const interval = setInterval(async () => {
       const token = localStorage.getItem('token')
       if (token) {
-        const response = await axios.get("http://localhost:5000/profile", {
+        const response = await axios.get(`${API_URL}/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data.user);

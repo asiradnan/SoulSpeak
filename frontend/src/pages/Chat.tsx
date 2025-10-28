@@ -3,6 +3,8 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { AlertCircle, Send, Loader } from 'lucide-react';
+import { SOCKET_URL } from '../config/api';
+import API_URL from '../config/api';
 
 interface Message {
     _id: string;
@@ -48,7 +50,7 @@ const Chat: React.FC = () => {
 
     const fetchCompanions = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/companions");
+            const response = await axios.get(`${API_URL}/companions`);
             setCompanions(response.data);
         } catch (error) {
             setError('Failed to fetch companions');
@@ -57,7 +59,7 @@ const Chat: React.FC = () => {
     const startCompanionChat = async (companionId: string) => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/chat/create",
+                `${API_URL}/chat/create`,
                 { participantId: companionId },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
@@ -122,7 +124,7 @@ useEffect(() => {
     };
 
     const initializeSocket = () => {
-        socket.current = io('http://localhost:5000', {
+        socket.current = io(SOCKET_URL, {
             auth: {
                 token: localStorage.getItem('token')
             }
@@ -155,7 +157,7 @@ useEffect(() => {
 
     const fetchCurrentUser = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/profile", {
+            const response = await axios.get(`${API_URL}/profile`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setCurrentUser(response.data.user);
@@ -167,7 +169,7 @@ useEffect(() => {
 
     const fetchChats = async () => {
         try {
-            const response = await axios.get<Chat[]>("http://localhost:5000/chat/", {
+            const response = await axios.get<Chat[]>(`${API_URL}/chat/`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setChats(response.data);
@@ -231,7 +233,7 @@ useEffect(() => {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/chat/send",
+                `${API_URL}/chat/send`,
                 {
                     chatId: currentChat._id,
                     content: message

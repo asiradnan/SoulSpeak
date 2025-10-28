@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
+import API_URL from '../config/api';
 
 const CompanionText = () => {
     const [score, setScore] = useState(0);
@@ -14,7 +15,7 @@ const CompanionText = () => {
         const fetchQuestions = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/questions', {
+                const response = await axios.get(`${API_URL}/questions`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setQuestions(response.data);
@@ -242,7 +243,7 @@ const CompanionText = () => {
         try {
             const token = localStorage.getItem('token');
             console.log(token);
-            const response = await axios.post('http://localhost:5000/companion', {percentage}, {
+            const response = await axios.post(`${API_URL}/companion`, {percentage}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (error) {
