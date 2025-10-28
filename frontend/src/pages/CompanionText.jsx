@@ -19,181 +19,27 @@ const CompanionText = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 
-                // Use comprehensive companion assessment questions
-                const comprehensiveQuestions = [
-                    {
-                        question: "A user tells you they're having suicidal thoughts. What is your most appropriate immediate response?",
-                        option1: ["Listen empathetically and suggest they talk to a professional counselor immediately"],
-                        option2: ["Tell them everything will be okay and share your own struggles"],
-                        option3: ["Ignore the comment and change the subject to something positive"],
-                        option4: ["Give them advice on how to solve their problems"],
-                        correct: 0
-                    },
-                    {
-                        question: "What is the most important principle of active listening in mental health support?",
-                        option1: ["Preparing your response while the other person talks"],
-                        option2: ["Giving advice and solutions to fix their problems"],
-                        option3: ["Being fully present and understanding without judgment"],
-                        option4: ["Sharing similar experiences from your own life"],
-                        correct: 2
-                    },
-                    {
-                        question: "When someone shares trauma with you, what should you prioritize?",
-                        option1: ["Creating a safe, non-judgmental space for them to be heard"],
-                        option2: ["Asking detailed questions about what happened"],
-                        option3: ["Immediately suggesting coping strategies"],
-                        option4: ["Sharing your own trauma to help them feel less alone"],
-                        correct: 0
-                    },
-                    {
-                        question: "What does empathy mean in the context of mental health support?",
-                        option1: ["Feeling sorry for someone's situation"],
-                        option2: ["Understanding and sharing someone's emotional experience"],
-                        option3: ["Giving advice to make someone feel better"],
-                        option4: ["Agreeing with everything someone says"],
-                        correct: 1
-                    },
-                    {
-                        question: "A user seems to be having a panic attack during your conversation. What should you do?",
-                        option1: ["Tell them to calm down and take deep breaths"],
-                        option2: ["Guide them through grounding techniques and stay calm yourself"],
-                        option3: ["Immediately end the conversation"],
-                        option4: ["Share your own experience with panic attacks"],
-                        correct: 1
-                    },
-                    {
-                        question: "What are the boundaries of a peer support companion?",
-                        option1: ["You can provide therapy and professional counseling"],
-                        option2: ["You should be available 24/7 for anyone who needs help"],
-                        option3: ["You provide emotional support but refer serious issues to professionals"],
-                        option4: ["You should solve all of someone's problems for them"],
-                        correct: 2
-                    },
-                    {
-                        question: "How should you respond when someone asks for your personal information?",
-                        option1: ["Share everything to build trust and connection"],
-                        option2: ["Politely maintain boundaries while staying supportive"],
-                        option3: ["Ignore the question completely"],
-                        option4: ["Make up false information to protect yourself"],
-                        correct: 1
-                    },
-                    {
-                        question: "What is the best way to handle your own emotional reactions during difficult conversations?",
-                        option1: ["Suppress your emotions completely to stay professional"],
-                        option2: ["Share all your emotional reactions with the person"],
-                        option3: ["Acknowledge your emotions internally and practice self-care"],
-                        option4: ["End conversations that make you uncomfortable"],
-                        correct: 2
-                    },
-                    {
-                        question: "When should you recommend someone seek professional help?",
-                        option1: ["Only when they directly ask for professional help"],
-                        option2: ["When they mention thoughts of self-harm, suicide, or harming others"],
-                        option3: ["Never, as companions should handle everything"],
-                        option4: ["Only after trying to solve their problems yourself first"],
-                        correct: 1
-                    },
-                    {
-                        question: "What is the most important aspect of maintaining confidentiality?",
-                        option1: ["Never discussing anything shared with you with anyone else, except in emergencies"],
-                        option2: ["Only sharing information with family members"],
-                        option3: ["Sharing information with other companions for advice"],
-                        option4: ["Confidentiality doesn't apply to peer support"],
-                        correct: 0
-                    }
-                ];
-                
-                setQuestions(comprehensiveQuestions);
-                console.log('Loaded comprehensive companion assessment questions');
+                // Use questions from database
+                if (response.data && response.data.length > 0) {
+                    // Format questions for the test
+                    const formattedQuestions = response.data.map(q => ({
+                        question: q.question,
+                        option1: [q.option1],
+                        option2: [q.option2],
+                        option3: [q.option3],
+                        option4: [q.option4],
+                        correct: parseInt(q.correct)
+                    }));
+                    setQuestions(formattedQuestions);
+                    console.log(`Loaded ${formattedQuestions.length} questions from database`);
+                } else {
+                    console.warn('No questions found in database');
+                }
             } catch (error) {
                 console.error('Error fetching questions:', error);
-                // Fallback to comprehensive questions if API fails
-                const fallbackQuestions = [
-                    {
-                        question: "A user tells you they're having suicidal thoughts. What is your most appropriate immediate response?",
-                        option1: ["Listen empathetically and suggest they talk to a professional counselor immediately"],
-                        option2: ["Tell them everything will be okay and share your own struggles"],
-                        option3: ["Ignore the comment and change the subject to something positive"],
-                        option4: ["Give them advice on how to solve their problems"],
-                        correct: 0
-                    },
-                    {
-                        question: "What is the most important principle of active listening in mental health support?",
-                        option1: ["Preparing your response while the other person talks"],
-                        option2: ["Giving advice and solutions to fix their problems"],
-                        option3: ["Being fully present and understanding without judgment"],
-                        option4: ["Sharing similar experiences from your own life"],
-                        correct: 2
-                    },
-                    {
-                        question: "When someone shares trauma with you, what should you prioritize?",
-                        option1: ["Creating a safe, non-judgmental space for them to be heard"],
-                        option2: ["Asking detailed questions about what happened"],
-                        option3: ["Immediately suggesting coping strategies"],
-                        option4: ["Sharing your own trauma to help them feel less alone"],
-                        correct: 0
-                    },
-                    {
-                        question: "What does empathy mean in the context of mental health support?",
-                        option1: ["Feeling sorry for someone's situation"],
-                        option2: ["Understanding and sharing someone's emotional experience"],
-                        option3: ["Giving advice to make someone feel better"],
-                        option4: ["Agreeing with everything someone says"],
-                        correct: 1
-                    },
-                    {
-                        question: "A user seems to be having a panic attack during your conversation. What should you do?",
-                        option1: ["Tell them to calm down and take deep breaths"],
-                        option2: ["Guide them through grounding techniques and stay calm yourself"],
-                        option3: ["Immediately end the conversation"],
-                        option4: ["Share your own experience with panic attacks"],
-                        correct: 1
-                    },
-                    {
-                        question: "What are the boundaries of a peer support companion?",
-                        option1: ["You can provide therapy and professional counseling"],
-                        option2: ["You should be available 24/7 for anyone who needs help"],
-                        option3: ["You provide emotional support but refer serious issues to professionals"],
-                        option4: ["You should solve all of someone's problems for them"],
-                        correct: 2
-                    },
-                    {
-                        question: "How should you respond when someone asks for your personal information?",
-                        option1: ["Share everything to build trust and connection"],
-                        option2: ["Politely maintain boundaries while staying supportive"],
-                        option3: ["Ignore the question completely"],
-                        option4: ["Make up false information to protect yourself"],
-                        correct: 1
-                    },
-                    {
-                        question: "What is the best way to handle your own emotional reactions during difficult conversations?",
-                        option1: ["Suppress your emotions completely to stay professional"],
-                        option2: ["Share all your emotional reactions with the person"],
-                        option3: ["Acknowledge your emotions internally and practice self-care"],
-                        option4: ["End conversations that make you uncomfortable"],
-                        correct: 2
-                    },
-                    {
-                        question: "When should you recommend someone seek professional help?",
-                        option1: ["Only when they directly ask for professional help"],
-                        option2: ["When they mention thoughts of self-harm, suicide, or harming others"],
-                        option3: ["Never, as companions should handle everything"],
-                        option4: ["Only after trying to solve their problems yourself first"],
-                        correct: 1
-                    },
-                    {
-                        question: "What is the most important aspect of maintaining confidentiality?",
-                        option1: ["Never discussing anything shared with you with anyone else, except in emergencies"],
-                        option2: ["Only sharing information with family members"],
-                        option3: ["Sharing information with other companions for advice"],
-                        option4: ["Confidentiality doesn't apply to peer support"],
-                        correct: 0
-                    }
-                ];
-                setQuestions(fallbackQuestions);
             }
         };
-
+        
         fetchQuestions();
     }, []);
     

@@ -50,7 +50,9 @@ const upload = multer({
 export async function verifyEmail(req, res) {
     try {
         const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-        const url = `http://localhost:5000/confirm-email?token=${token}`;
+        // Use backend URL for verification endpoint
+        const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+        const url = `${backendUrl}/confirm-email?token=${token}`;
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -63,8 +65,22 @@ export async function verifyEmail(req, res) {
         console.log("About to transport")
         await transporter.sendMail({
             to: user.email,
-            subject: 'Verify Your Email',
-            html: `<p>Click <a href="${url}">here</a> to verify your email.</p>`,
+            subject: 'Verify Your Email - SoulSpeak',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #4F46E5;">Welcome to SoulSpeak!</h2>
+                    <p>Hi ${user.name || user.username},</p>
+                    <p>Thank you for signing up. Please verify your email address to get started.</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${url}" style="background-color: #4F46E5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">Verify Email</a>
+                    </div>
+                    <p style="color: #666;">If the button doesn't work, copy and paste this link into your browser:</p>
+                    <p style="color: #4F46E5; word-break: break-all;">${url}</p>
+                    <p style="color: #666;">This link will expire in 24 hours.</p>
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    <p style="color: #999; font-size: 12px;">Best regards,<br>SoulSpeak Team</p>
+                </div>
+            `,
         });
         res.status(200).json({ message: 'Verification email sent.' });
     } catch (error) {
@@ -80,24 +96,37 @@ export async function confirmEmail(req, res) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         await User.findByIdAndUpdate(decoded.id, { verified: true });
-        res.redirect('http://localhost:5173/profile');
+        
+        // Use frontend URL for redirect
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        res.redirect(`${frontendUrl}/profile`);
     } catch (error) {
-        res.redirect('http://localhost:5173/login?error=invalid-token');
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        res.redirect(`${frontendUrl}/login?error=invalid-token`);
     }
 };
 
 export async function sendPasswordResetEmail(req, res) {
     try {
         const { email } = req.body;
+        console.log('Reset password request for email:', email);
+        
         const user = await User.findOne({ email });
         
         if (!user) {
+            console.log('User not found for email:', email);
             return res.status(404).json({ message: "User with this email does not exist" });
         }
 
-        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
+        console.log('User found:', user.username);
 
+        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        
+        // Use environment variable for frontend URL, fallback to localhost
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
+
+        console.log('Creating email transporter...');
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -106,22 +135,41 @@ export async function sendPasswordResetEmail(req, res) {
             },
         });
 
-        await transporter.sendMail({
+        console.log('Sending email to:', user.email);
+        const info = await transporter.sendMail({
             to: user.email,
             subject: 'Reset Your SoulSpeak Password',
             html: `
-                <h2>Password Reset Request</h2>
-                <p>Click the link below to reset your password. This link will expire in 1 hour.</p>
-                <a href="${resetUrl}">Reset Password</a>
-                <p>If you didn't request this, please ignore this email.</p>
-                <p>Best regards,<br>SoulSpeak Team</p>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #4F46E5;">Password Reset Request</h2>
+                    <p>Hi ${user.name || user.username},</p>
+                    <p>We received a request to reset your password for your SoulSpeak account.</p>
+                    <p>Click the button below to reset your password. This link will expire in 1 hour.</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${resetUrl}" style="background-color: #4F46E5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">Reset Password</a>
+                    </div>
+                    <p style="color: #666;">If the button doesn't work, copy and paste this link into your browser:</p>
+                    <p style="color: #4F46E5; word-break: break-all;">${resetUrl}</p>
+                    <p style="color: #666;">If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    <p style="color: #999; font-size: 12px;">Best regards,<br>SoulSpeak Team</p>
+                </div>
             `,
         });
 
+        console.log('Email sent successfully:', info.messageId);
         res.status(200).json({ message: 'Password reset email sent successfully' });
     } catch (error) {
         console.error('Password reset email error:', error);
-        res.status(500).json({ message: 'Error sending password reset email' });
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response
+        });
+        res.status(500).json({ 
+            message: 'Error sending password reset email',
+            error: error.message 
+        });
     }
 }
 export async function resetPassword(req, res) {
@@ -254,10 +302,8 @@ export async function login(request, response) {
 }
 
 export const profile = async (req, res) => {
-    console.log("Received request to get profile");
     try {
         const user = await User.findById(req.user.id);
-        console.log("User found:", user);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
