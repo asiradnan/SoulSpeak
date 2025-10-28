@@ -14,6 +14,9 @@ import ResetPassword from './pages/ResetPassword'
 import axios from 'axios'
 import API_URL from './config/api'
 
+// Set document title
+document.title = 'SoulSpeak - Mental Health Support Community';
+
 
 const Home = () => {
   const [quote, setQuote] = useState('');
@@ -255,9 +258,14 @@ const App = () => {
             ) : (
               <>
                 {user && !user.isCompanion && (
-                <Link to="/become-a-companion" className="text-secondary-700 hover:text-primary-600 font-medium transition-colors duration-200">
-                  Become A Companion
-                </Link>
+                <>
+                  <Link to="/training-program" className="text-secondary-700 hover:text-primary-600 font-medium transition-colors duration-200">
+                    Training Program
+                  </Link>
+                  <Link to="/become-a-companion" className="text-secondary-700 hover:text-primary-600 font-medium transition-colors duration-200">
+                    Become A Companion
+                  </Link>
+                </>
                 )}
                 <Link to="/chat" className="text-secondary-700 hover:text-primary-600 font-medium transition-colors duration-200">
                   Chat

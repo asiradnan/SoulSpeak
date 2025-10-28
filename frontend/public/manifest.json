@@ -1,0 +1,21 @@
+{
+  "name": "SoulSpeak - Mental Health Support Community",
+  "short_name": "SoulSpeak",
+  "description": "A mental health support platform connecting people through compassionate conversations and community support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

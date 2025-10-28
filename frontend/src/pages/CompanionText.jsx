@@ -18,10 +18,179 @@ const CompanionText = () => {
                 const response = await axios.get(`${API_URL}/questions`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setQuestions(response.data);
-                console.log(response.data);
+                
+                // Use comprehensive companion assessment questions
+                const comprehensiveQuestions = [
+                    {
+                        question: "A user tells you they're having suicidal thoughts. What is your most appropriate immediate response?",
+                        option1: ["Listen empathetically and suggest they talk to a professional counselor immediately"],
+                        option2: ["Tell them everything will be okay and share your own struggles"],
+                        option3: ["Ignore the comment and change the subject to something positive"],
+                        option4: ["Give them advice on how to solve their problems"],
+                        correct: 0
+                    },
+                    {
+                        question: "What is the most important principle of active listening in mental health support?",
+                        option1: ["Preparing your response while the other person talks"],
+                        option2: ["Giving advice and solutions to fix their problems"],
+                        option3: ["Being fully present and understanding without judgment"],
+                        option4: ["Sharing similar experiences from your own life"],
+                        correct: 2
+                    },
+                    {
+                        question: "When someone shares trauma with you, what should you prioritize?",
+                        option1: ["Creating a safe, non-judgmental space for them to be heard"],
+                        option2: ["Asking detailed questions about what happened"],
+                        option3: ["Immediately suggesting coping strategies"],
+                        option4: ["Sharing your own trauma to help them feel less alone"],
+                        correct: 0
+                    },
+                    {
+                        question: "What does empathy mean in the context of mental health support?",
+                        option1: ["Feeling sorry for someone's situation"],
+                        option2: ["Understanding and sharing someone's emotional experience"],
+                        option3: ["Giving advice to make someone feel better"],
+                        option4: ["Agreeing with everything someone says"],
+                        correct: 1
+                    },
+                    {
+                        question: "A user seems to be having a panic attack during your conversation. What should you do?",
+                        option1: ["Tell them to calm down and take deep breaths"],
+                        option2: ["Guide them through grounding techniques and stay calm yourself"],
+                        option3: ["Immediately end the conversation"],
+                        option4: ["Share your own experience with panic attacks"],
+                        correct: 1
+                    },
+                    {
+                        question: "What are the boundaries of a peer support companion?",
+                        option1: ["You can provide therapy and professional counseling"],
+                        option2: ["You should be available 24/7 for anyone who needs help"],
+                        option3: ["You provide emotional support but refer serious issues to professionals"],
+                        option4: ["You should solve all of someone's problems for them"],
+                        correct: 2
+                    },
+                    {
+                        question: "How should you respond when someone asks for your personal information?",
+                        option1: ["Share everything to build trust and connection"],
+                        option2: ["Politely maintain boundaries while staying supportive"],
+                        option3: ["Ignore the question completely"],
+                        option4: ["Make up false information to protect yourself"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the best way to handle your own emotional reactions during difficult conversations?",
+                        option1: ["Suppress your emotions completely to stay professional"],
+                        option2: ["Share all your emotional reactions with the person"],
+                        option3: ["Acknowledge your emotions internally and practice self-care"],
+                        option4: ["End conversations that make you uncomfortable"],
+                        correct: 2
+                    },
+                    {
+                        question: "When should you recommend someone seek professional help?",
+                        option1: ["Only when they directly ask for professional help"],
+                        option2: ["When they mention thoughts of self-harm, suicide, or harming others"],
+                        option3: ["Never, as companions should handle everything"],
+                        option4: ["Only after trying to solve their problems yourself first"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the most important aspect of maintaining confidentiality?",
+                        option1: ["Never discussing anything shared with you with anyone else, except in emergencies"],
+                        option2: ["Only sharing information with family members"],
+                        option3: ["Sharing information with other companions for advice"],
+                        option4: ["Confidentiality doesn't apply to peer support"],
+                        correct: 0
+                    }
+                ];
+                
+                setQuestions(comprehensiveQuestions);
+                console.log('Loaded comprehensive companion assessment questions');
             } catch (error) {
                 console.error('Error fetching questions:', error);
+                // Fallback to comprehensive questions if API fails
+                const fallbackQuestions = [
+                    {
+                        question: "A user tells you they're having suicidal thoughts. What is your most appropriate immediate response?",
+                        option1: ["Listen empathetically and suggest they talk to a professional counselor immediately"],
+                        option2: ["Tell them everything will be okay and share your own struggles"],
+                        option3: ["Ignore the comment and change the subject to something positive"],
+                        option4: ["Give them advice on how to solve their problems"],
+                        correct: 0
+                    },
+                    {
+                        question: "What is the most important principle of active listening in mental health support?",
+                        option1: ["Preparing your response while the other person talks"],
+                        option2: ["Giving advice and solutions to fix their problems"],
+                        option3: ["Being fully present and understanding without judgment"],
+                        option4: ["Sharing similar experiences from your own life"],
+                        correct: 2
+                    },
+                    {
+                        question: "When someone shares trauma with you, what should you prioritize?",
+                        option1: ["Creating a safe, non-judgmental space for them to be heard"],
+                        option2: ["Asking detailed questions about what happened"],
+                        option3: ["Immediately suggesting coping strategies"],
+                        option4: ["Sharing your own trauma to help them feel less alone"],
+                        correct: 0
+                    },
+                    {
+                        question: "What does empathy mean in the context of mental health support?",
+                        option1: ["Feeling sorry for someone's situation"],
+                        option2: ["Understanding and sharing someone's emotional experience"],
+                        option3: ["Giving advice to make someone feel better"],
+                        option4: ["Agreeing with everything someone says"],
+                        correct: 1
+                    },
+                    {
+                        question: "A user seems to be having a panic attack during your conversation. What should you do?",
+                        option1: ["Tell them to calm down and take deep breaths"],
+                        option2: ["Guide them through grounding techniques and stay calm yourself"],
+                        option3: ["Immediately end the conversation"],
+                        option4: ["Share your own experience with panic attacks"],
+                        correct: 1
+                    },
+                    {
+                        question: "What are the boundaries of a peer support companion?",
+                        option1: ["You can provide therapy and professional counseling"],
+                        option2: ["You should be available 24/7 for anyone who needs help"],
+                        option3: ["You provide emotional support but refer serious issues to professionals"],
+                        option4: ["You should solve all of someone's problems for them"],
+                        correct: 2
+                    },
+                    {
+                        question: "How should you respond when someone asks for your personal information?",
+                        option1: ["Share everything to build trust and connection"],
+                        option2: ["Politely maintain boundaries while staying supportive"],
+                        option3: ["Ignore the question completely"],
+                        option4: ["Make up false information to protect yourself"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the best way to handle your own emotional reactions during difficult conversations?",
+                        option1: ["Suppress your emotions completely to stay professional"],
+                        option2: ["Share all your emotional reactions with the person"],
+                        option3: ["Acknowledge your emotions internally and practice self-care"],
+                        option4: ["End conversations that make you uncomfortable"],
+                        correct: 2
+                    },
+                    {
+                        question: "When should you recommend someone seek professional help?",
+                        option1: ["Only when they directly ask for professional help"],
+                        option2: ["When they mention thoughts of self-harm, suicide, or harming others"],
+                        option3: ["Never, as companions should handle everything"],
+                        option4: ["Only after trying to solve their problems yourself first"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the most important aspect of maintaining confidentiality?",
+                        option1: ["Never discussing anything shared with you with anyone else, except in emergencies"],
+                        option2: ["Only sharing information with family members"],
+                        option3: ["Sharing information with other companions for advice"],
+                        option4: ["Confidentiality doesn't apply to peer support"],
+                        correct: 0
+                    }
+                ];
+                setQuestions(fallbackQuestions);
             }
         };
 
@@ -262,7 +431,7 @@ const CompanionText = () => {
 
         setScore(finalScore);
         const percentage = (finalScore / questions.length) * 100;
-        if (percentage >= 70) {
+        if (percentage >= 80) { // Increased threshold for comprehensive assessment
             console.log(`Percentage: ${percentage}%`);
             makeUserCompanion(percentage);
         }
@@ -271,116 +440,240 @@ const CompanionText = () => {
     };
 
     const renderResultContent = () => {
-        const percentage = ((score / questions.length) * 100).toFixed(2);
+        const percentage = ((score / questions.length) * 100).toFixed(1);
 
-        if (percentage >= 70) {
+        if (percentage >= 80) {
             return (
-                <div className="text-center space-y-4">
-                    <h3 className="text-2xl font-bold" style={{ color: '#4D6A6D' }}>
-                        Congratulations! 🎉
-                    </h3>
-                    <p className="text-lg" style={{ color: '#4C5B61' }}>
-                        You've demonstrated excellent understanding and empathy skills.
-                        You're ready to be a SoulSpeak companion!
-                    </p>
+                <div className="text-center space-y-6">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-success-100 rounded-full mb-4">
+                        <svg className="w-10 h-10 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    
+                    <div>
+                        <h3 className="text-3xl font-bold text-secondary-900 mb-3">
+                            Congratulations! 🎉
+                        </h3>
+                        <div className="inline-flex items-center px-4 py-2 bg-success-100 text-success-700 rounded-full font-semibold mb-4">
+                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            Certified Companion
+                        </div>
+                        <p className="text-lg text-secondary-600 leading-relaxed max-w-md mx-auto">
+                            You've demonstrated excellent understanding and empathy skills. 
+                            You're now ready to support others as a SoulSpeak companion!
+                        </p>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-violet-50 to-success-50 rounded-xl p-6 border border-success-200">
+                        <h4 className="font-semibold text-secondary-900 mb-2">What happens next?</h4>
+                        <ul className="text-sm text-secondary-600 space-y-1 text-left max-w-sm mx-auto">
+                            <li className="flex items-start gap-2">
+                                <svg className="w-4 h-4 text-success-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                Your companion status has been activated
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <svg className="w-4 h-4 text-success-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                You can now help others in the community
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <svg className="w-4 h-4 text-success-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                Access to companion resources and support
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             );
         }
 
-
         return (
-            <div className="text-center space-y-4">
-                <h3 className="text-xl font-bold" style={{ color: '#4D6A6D' }}>
-                    Keep Growing!
-                </h3>
-                <p className="text-lg" style={{ color: '#4C5B61' }}>
-                    We see your potential! Enhance your skills with our training program.
-                </p>
-                <a
-                    href="/training-program"
-                    className="inline-block text-white font-medium py-2 px-6 rounded-md transition-colors"
-                    style={{ backgroundColor: '#4D6A6D', hover: { backgroundColor: '#4C5B61' } }}
-                >
-                    Join Training Program
-                </a>
+            <div className="text-center space-y-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-accent-100 rounded-full mb-4">
+                    <svg className="w-10 h-10 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                
+                <div>
+                    <h3 className="text-2xl font-bold text-secondary-900 mb-3">
+                        Keep Growing! 🌱
+                    </h3>
+                    <p className="text-lg text-secondary-600 leading-relaxed max-w-md mx-auto mb-6">
+                        We see your potential! Enhance your skills with our comprehensive training program 
+                        and try the assessment again.
+                    </p>
+                </div>
+                
+                <div className="bg-gradient-to-r from-accent-50 to-sage-50 rounded-xl p-6 border border-accent-200">
+                    <h4 className="font-semibold text-secondary-900 mb-3">Recommended next steps:</h4>
+                    <div className="space-y-4">
+                        <a
+                            href="/training-program"
+                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-accent-600 to-accent-700 text-white font-semibold rounded-xl hover:from-accent-700 hover:to-accent-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            Join Training Program
+                        </a>
+                        
+                        <div className="text-sm text-secondary-500">
+                            Minimum score required: 80% • Your score: {percentage}%
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     };
 
     return (
-            <div className="max-w-4xl mx-auto p-5">
+        <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-violet-50 py-12 px-4">
+            <div className="max-w-4xl mx-auto">
                 {!showResult ? (
                     <>
-                        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: '#4D6A6D' }}>
-                            SoulSpeak Companion Assessment
-                        </h2>
-                        <div className="space-y-6">
+                        {/* Header Section */}
+                        <div className="text-center mb-12">
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-violet-600 to-violet-700 rounded-full mb-6">
+                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h1 className="text-4xl font-bold text-secondary-900 mb-4">
+                                SoulSpeak Companion Assessment
+                            </h1>
+                            <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+                                Demonstrate your understanding of mental health support, empathy, and communication skills 
+                                to become a certified SoulSpeak companion.
+                            </p>
+                            
+                            {/* Progress Bar */}
+                            <div className="mt-8 max-w-md mx-auto">
+                                <div className="flex justify-between text-sm text-secondary-600 mb-2">
+                                    <span>Progress</span>
+                                    <span>{Object.keys(userAnswers).length} of {questions.length}</span>
+                                </div>
+                                <div className="w-full bg-secondary-200 rounded-full h-2">
+                                    <div 
+                                        className="bg-gradient-to-r from-violet-600 to-violet-700 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${(Object.keys(userAnswers).length / questions.length) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Questions Section */}
+                        <div className="space-y-8">
                             {questions.map((q, qIndex) => (
-                                <div key={qIndex} className="rounded-lg shadow-md p-6" style={{ backgroundColor: '#C5C5C5' }}>
-                                    <h3 className="text-xl font-semibold mb-4" style={{ color: '#4D6A6D' }}>
-                                        Question {qIndex + 1}
-                                    </h3>
-                                    <p className="mb-4" style={{ color: '#4C5B61' }}>
-                                        {q.question}
-                                    </p>
-                                    <div className="space-y-3">
-                                        {[q.option1[0], q.option2[0], q.option3[0], q.option4[0]].map((option, oIndex) => (
-                                            <label
-                                                key={oIndex}
-                                                className="flex items-center space-x-3 p-3 rounded-md cursor-pointer transition-colors"
-                                                style={{ 
-                                                    backgroundColor: '#829191',
-                                                    hover: { backgroundColor: '#949896' }
-                                                }}
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    name={`question-${qIndex}`}
-                                                    checked={userAnswers[qIndex] === oIndex}
-                                                    onChange={() => handleAnswer(qIndex, oIndex)}
-                                                    className="form-radio h-4 w-4"
-                                                    style={{ accentColor: '#4D6A6D' }}
-                                                />
-                                                <span style={{ color: '#4C5B61' }}>{option}</span>
-                                            </label>
-                                        ))}
+                                <div key={qIndex} className="bg-white rounded-2xl shadow-lg border border-secondary-100 overflow-hidden">
+                                    <div className="bg-gradient-to-r from-violet-50 to-violet-100 px-8 py-6 border-b border-secondary-100">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center justify-center w-10 h-10 bg-violet-600 text-white rounded-full font-bold">
+                                                {qIndex + 1}
+                                            </div>
+                                            <h3 className="text-xl font-semibold text-secondary-900">
+                                                Question {qIndex + 1} of {questions.length}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="p-8">
+                                        <p className="text-lg text-secondary-700 mb-6 leading-relaxed">
+                                            {q.question}
+                                        </p>
+                                        
+                                        <div className="space-y-3">
+                                            {[q.option1[0], q.option2[0], q.option3[0], q.option4[0]].map((option, oIndex) => (
+                                                <label
+                                                    key={oIndex}
+                                                    className={`flex items-center space-x-4 p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
+                                                        userAnswers[qIndex] === oIndex
+                                                            ? 'border-violet-600 bg-violet-50 text-violet-900'
+                                                            : 'border-secondary-200 bg-secondary-50 hover:border-violet-300 hover:bg-violet-50'
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name={`question-${qIndex}`}
+                                                        checked={userAnswers[qIndex] === oIndex}
+                                                        onChange={() => handleAnswer(qIndex, oIndex)}
+                                                        className="w-5 h-5 text-violet-600 focus:ring-violet-500 focus:ring-2"
+                                                    />
+                                                    <span className="flex-1 text-secondary-700 font-medium">
+                                                        {option}
+                                                    </span>
+                                                    {userAnswers[qIndex] === oIndex && (
+                                                        <svg className="w-5 h-5 text-violet-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                        </svg>
+                                                    )}
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
-                            <button
-                                onClick={handleSubmit}
-                                disabled={Object.keys(userAnswers).length !== questions.length || isLoading}
-                                className={`w-full py-3 px-6 rounded-md text-white font-medium transition-colors`}
-                                style={{
-                                    backgroundColor: isLoading || Object.keys(userAnswers).length !== questions.length
-                                        ? '#949896'
-                                        : '#4D6A6D',
-                                    cursor: isLoading || Object.keys(userAnswers).length !== questions.length
-                                        ? 'not-allowed'
-                                        : 'pointer',
-                                    hover: { backgroundColor: '#4C5B61' }
-                                }}
-                            >
-                                {isLoading ? 'Processing...' : 'Submit Test'}
-                            </button>
+                            
+                            {/* Submit Button */}
+                            <div className="text-center pt-8">
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={Object.keys(userAnswers).length !== questions.length || isLoading}
+                                    className={`px-12 py-4 rounded-xl text-white font-semibold text-lg transition-all duration-200 shadow-lg ${
+                                        isLoading || Object.keys(userAnswers).length !== questions.length
+                                            ? 'bg-secondary-400 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 hover:shadow-xl transform hover:-translate-y-1'
+                                    }`}
+                                >
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            Processing Assessment...
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {Object.keys(userAnswers).length === questions.length ? 'Submit Assessment' : `Answer ${questions.length - Object.keys(userAnswers).length} More Questions`}
+                                        </>
+                                    )}
+                                </button>
+                                
+                                {Object.keys(userAnswers).length < questions.length && (
+                                    <p className="text-secondary-500 mt-3">
+                                        Please answer all questions before submitting
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </>
-            ) : (
-                <div className="rounded-lg shadow-md p-8" style={{ backgroundColor: '#C5C5C5' }}>
-                <h2 className="text-3xl font-bold mb-6" style={{ color: '#4D6A6D' }}>
-                    Your Assessment Results
-                </h2>
-                    {/* <div className="mb-8">
-                        <h3 className="text-2xl font-semibold mb-2">
-                            Score: {score} out of {questions.length}
-                        </h3>
-                        <p className="text-xl text-gray-600">
-                            Percentage: {((score/questions.length) * 100).toFixed(2)}%
-                        </p>
-                    </div> */}
-                    {renderResultContent()}
-                </div>
-            )}
+                ) : (
+                    <div className="max-w-2xl mx-auto">
+                        <div className="bg-white rounded-2xl shadow-xl border border-secondary-100 overflow-hidden">
+                            <div className="bg-gradient-to-r from-violet-600 to-violet-700 px-8 py-12 text-center text-white">
+                                <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
+                                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-3xl font-bold mb-4">Assessment Complete!</h2>
+                                <div className="text-xl text-violet-100">
+                                    Score: {score} out of {questions.length} ({((score/questions.length) * 100).toFixed(1)}%)
+                                </div>
+                            </div>
+                            
+                            <div className="p-8">
+                                {renderResultContent()}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
