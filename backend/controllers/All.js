@@ -8,28 +8,43 @@ import ProfilePicture from "../models/profilePicture.js";
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
-
-
+// Ensure uploads directory exists
+const uploadsDir = './uploads';
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory');
+}
 
 const storage = multer.diskStorage({
-    
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        // Double-check directory exists before writing
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        // Create unique filename with timestamp
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-const upload = multer({ storage,
+const upload = multer({ 
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         if (!allowedTypes.includes(file.mimetype)) {
-            return cb(new Error('Only images are allowed'), false);
+            return cb(new Error('Only image files (JPEG, PNG, GIF, WebP) are allowed'), false);
         }
         cb(null, true);
-    } });
+    }
+});
 
 
 export async function verifyEmail(req, res) {
@@ -306,25 +321,48 @@ export const updateProfile = async (req, res) => {
 
 export const uploadProfilePicture = async (req, res) => {
     try {
+        console.log('Upload profile picture request received for user:', req.user?.id);
+        
+        // Check if user is authenticated
+        if (!req.user || !req.user.id) {
+            console.error('No authenticated user found');
+            return res.status(401).json({ message: 'Authentication required' });
+        }
+
         const uploadResult = await new Promise((resolve, reject) => {
             upload.single('image')(req, res, (err) => {
-                if (err) reject(err);
+                if (err) {
+                    console.error('Multer upload error:', err.message);
+                    if (err.code === 'LIMIT_FILE_SIZE') {
+                        reject(new Error('File too large. Maximum size is 5MB.'));
+                    } else if (err.message.includes('Only image files')) {
+                        reject(new Error(err.message));
+                    } else {
+                        reject(new Error('File upload failed'));
+                    }
+                    return;
+                }
+                console.log('File upload successful:', req.file);
                 resolve(req.file);
             });
         });
 
         if (!uploadResult) {
+            console.error('No file uploaded');
             return res.status(400).json({ message: 'No image file provided' });
         }
 
         const imageUrl = `/uploads/${uploadResult.filename}`;
+        console.log('Generated image URL:', imageUrl);
         
-        // Update user's profile picture
+        // Update user's profile picture in database
         const profilePic = await ProfilePicture.findOneAndUpdate(
             { user: req.user.id },
             { imageUrl: imageUrl },
             { upsert: true, new: true }
         );
+
+        console.log('Profile picture database record updated:', profilePic);
 
         res.status(200).json({ 
             message: 'Profile picture updated successfully',
@@ -333,7 +371,20 @@ export const uploadProfilePicture = async (req, res) => {
 
     } catch (error) {
         console.error('Profile picture upload error:', error);
-        res.status(500).json({ message: 'Error uploading profile picture' });
+        
+        // Send specific error messages based on error type
+        if (error.message.includes('File too large')) {
+            return res.status(400).json({ message: error.message });
+        } else if (error.message.includes('Only image files')) {
+            return res.status(400).json({ message: error.message });
+        } else if (error.message.includes('Authentication')) {
+            return res.status(401).json({ message: error.message });
+        } else {
+            return res.status(500).json({ 
+                message: 'Error uploading profile picture',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
     }
 };
 export const getProfilePicture = async (req, res) => {

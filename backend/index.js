@@ -33,7 +33,7 @@ app.use("",router)
 app.use("/admin",adminRouter)
 app.use("/chat", chatRouter);
 
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('./uploads'));
 
 
 

@@ -39,4 +39,5 @@ build/
 *.sw?
 
 # Uploads folder (production should use cloud storage)
-uploads/
+uploads/*
+!uploads/.gitkeep
