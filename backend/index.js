@@ -9,8 +9,14 @@ import http from 'http';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import chatSocket from './socket/chatSocket.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from root directory
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT ||  5001;
