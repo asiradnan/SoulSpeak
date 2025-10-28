@@ -5,7 +5,7 @@ import Post from '../models/Post.js';
 import Report from '../models/Report.js';
 import Question from "../models/questionModel.js";
 import ProfilePicture from "../models/profilePicture.js";
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -54,16 +54,12 @@ export async function verifyEmail(req, res) {
         const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
         const url = `${backendUrl}/confirm-email?token=${token}`;
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
+        const resend = new Resend(process.env.RESEND_API_KEY);
         const user = await User.findById(req.user.id);
-        console.log("About to transport")
-        await transporter.sendMail({
+        console.log("About to send email with Resend")
+        
+        const { data, error } = await resend.emails.send({
+            from: 'SoulSpeak <onboarding@resend.dev>',
             to: user.email,
             subject: 'Verify Your Email - SoulSpeak',
             html: `
@@ -82,9 +78,17 @@ export async function verifyEmail(req, res) {
                 </div>
             `,
         });
+
+        if (error) {
+            console.error('Resend error:', error);
+            return res.status(500).json({ message: 'Error sending verification email' });
+        }
+
+        console.log('Email sent successfully:', data.id);
         res.status(200).json({ message: 'Verification email sent.' });
     } catch (error) {
         console.error(error);
+        res.status(500).json({ message: 'Error sending verification email' });
     }
 
 };
@@ -126,17 +130,12 @@ export async function sendPasswordResetEmail(req, res) {
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-        console.log('Creating email transporter...');
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
+        console.log('Initializing Resend...');
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         console.log('Sending email to:', user.email);
-        const info = await transporter.sendMail({
+        const { data, error } = await resend.emails.send({
+            from: 'SoulSpeak <onboarding@resend.dev>',
             to: user.email,
             subject: 'Reset Your SoulSpeak Password',
             html: `
@@ -157,7 +156,15 @@ export async function sendPasswordResetEmail(req, res) {
             `,
         });
 
-        console.log('Email sent successfully:', info.messageId);
+        if (error) {
+            console.error('Resend error:', error);
+            return res.status(500).json({ 
+                message: 'Error sending password reset email',
+                error: error.message 
+            });
+        }
+
+        console.log('Email sent successfully:', data.id);
         res.status(200).json({ message: 'Password reset email sent successfully' });
     } catch (error) {
         console.error('Password reset email error:', error);
