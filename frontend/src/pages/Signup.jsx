@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import API_URL from '../config/api';
 
 const Signup = () => {
@@ -91,12 +91,17 @@ const Signup = () => {
     };
 
     if (requiredFields[currentStep] && !formData[requiredFields[currentStep]]) {
-      setError(`Please select your ${requiredFields[currentStep]}`);
+      setError('Please select an option');
       return;
     }
 
     setError(null);
     setCurrentStep(currentStep + 1);
+  };
+
+  const prevStep = () => {
+    setError(null);
+    setCurrentStep(currentStep - 1);
   };
 
   const handleSubmit = async (e) => {
@@ -112,35 +117,42 @@ const Signup = () => {
     try {
       const response = await axios.post(`${API_URL}/signup`, formData);
       if (response.status === 201) {
-        setSuccess('You joined our community!');
+        setSuccess('Welcome to SoulSpeak! Redirecting...');
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Something went wrong. Please try again.');
+      setError(error.response?.data?.message || 'Something went wrong');
     }
   };
 
-  const renderOptionButtons = (options, field, title) => (
-    <div className="space-y-4">
-      <h3 className="text-2xl font-medium mb-6" style={{ color: '#4D6A6D' }}>
-        {title}
-      </h3>
+  const renderOptionButtons = (options, field, title, description) => (
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-bold text-secondary-900 mb-2">{title}</h3>
+        {description && <p className="text-secondary-600 text-sm">{description}</p>}
+      </div>
       <div className="space-y-3">
         {options.map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => handleOptionSelect(field, option)}
-            className="w-full p-4 text-left rounded-xl transition-all duration-300 hover:shadow-md"
-            style={{ 
-              backgroundColor: formData[field] === option ? '#4D6A6D' : 'white',
-              color: formData[field] === option ? 'white' : '#4C5B61',
-              border: `1px solid ${formData[field] === option ? '#4D6A6D' : '#829191'}`
-            }}
+            className={`w-full p-4 text-left rounded-lg transition-all duration-200 border-2 font-medium ${
+              formData[field] === option
+                ? 'bg-primary-50 border-primary-500 text-primary-700'
+                : 'bg-white border-secondary-200 text-secondary-700 hover:border-primary-300'
+            }`}
           >
-            {option}
+            <div className="flex items-center justify-between">
+              <span>{option}</span>
+              {formData[field] === option && (
+                <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
           </button>
         ))}
       </div>
@@ -150,72 +162,67 @@ const Signup = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return renderOptionButtons(referralOptions, 'referral', 'How did you find us?');
+        return renderOptionButtons(referralOptions, 'referral', 'How did you find us?', 'Help us understand how you discovered SoulSpeak');
       case 2:
-        return renderOptionButtons(mentalConditionOptions, 'mentalCondition', 'What best describes your condition?');
+        return renderOptionButtons(mentalConditionOptions, 'mentalCondition', 'What brings you here?', 'This helps us personalize your experience');
       case 3:
-        return renderOptionButtons(ageGroupOptions, 'ageGroup', 'What is your age group?');
+        return renderOptionButtons(ageGroupOptions, 'ageGroup', 'What is your age group?', 'We tailor support based on life stages');
       case 4:
-        return renderOptionButtons(genderOptions, 'gender', 'What is your gender?');
+        return renderOptionButtons(genderOptions, 'gender', 'How do you identify?', 'This information is kept confidential');
       case 5:
         return (
-          <div className="space-y-4">
-            <h3 className="text-2xl font-medium mb-6" style={{ color: '#4D6A6D' }}>
-              What country are you from?
-            </h3>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-secondary-900 mb-2">Where are you from?</h3>
+              <p className="text-secondary-600 text-sm">This helps us connect you with relevant resources</p>
+            </div>
             <input
               type="text"
               name="country"
-              placeholder="Country"
+              placeholder="Enter your country"
               value={formData.country}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
-              style={{ 
-                border: '1px solid #829191',
-                backgroundColor: 'white'
-              }}
+              className="w-full px-4 py-3 rounded-lg border-2 border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
         );
       case 6:
-        return renderOptionButtons(goalOptions, 'goals', 'What are your goals?');
+        return renderOptionButtons(goalOptions, 'goals', 'What are your goals?', 'Select what matters most to you');
       case 7:
-        return renderOptionButtons(preferenceOptions, 'preferences', 'What are your preferences?');
+        return renderOptionButtons(preferenceOptions, 'preferences', 'Communication preference?', 'How would you like to connect?');
       case 8:
         return (
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {[
-              { name: 'name', placeholder: 'Full Name' },
-              { name: 'username', placeholder: 'Pseudo Name' },
-              { name: 'email', placeholder: 'Email', type: 'email' },
-              { name: 'password', placeholder: 'Password', type: 'password' },
-              { name: 'confirmPassword', placeholder: 'Confirm Password', type: 'password' }
-            ].map((field) => (
-              <input
-                key={field.name}
-                type={field.type || 'text'}
-                name={field.name}
-                placeholder={field.placeholder}
-                value={formData[field.name]}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2"
-                style={{ 
-                  border: '1px solid #829191',
-                  backgroundColor: 'white'
-                }}
-              />
-            ))}
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl font-medium mt-8 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-              style={{ 
-                backgroundColor: '#4D6A6D',
-                color: 'white'
-              }}
-            >
-              Create Account
-            </button>
-          </form>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-secondary-900 mb-2">Create your account</h3>
+              <p className="text-secondary-600 text-sm">Almost there! Just a few more details</p>
+            </div>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {[
+                { name: 'name', placeholder: 'Full Name', label: 'Full Name', type: 'text' },
+                { name: 'username', placeholder: 'Choose a username', label: 'Username', type: 'text' },
+                { name: 'email', placeholder: 'you@example.com', label: 'Email Address', type: 'email' },
+                { name: 'password', placeholder: 'Create a password', label: 'Password', type: 'password' },
+                { name: 'confirmPassword', placeholder: 'Confirm password', label: 'Confirm Password', type: 'password' }
+              ].map((field) => (
+                <div key={field.name}>
+                  <label className="block text-sm font-medium text-secondary-700 mb-2">{field.label}</label>
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              ))}
+              <button type="submit" className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg mt-6 shadow-md">
+                Create Account
+              </button>
+            </form>
+          </div>
         );
       default:
         return null;
@@ -223,53 +230,37 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4" style={{ backgroundColor: '#C5C5C5' }}>
-      <div className="max-w-md w-full space-y-8 p-10 rounded-2xl shadow-xl" style={{ backgroundColor: 'white' }}>
-        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: '#4D6A6D' }}>
-          Join Our Community
-        </h2>
-
-        <div className="mb-8">
-          {renderStep()}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-secondary-50 via-white to-primary-50">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-bold text-secondary-900 mb-2">Join SoulSpeak</h2>
+          <p className="text-secondary-600">Step {currentStep} of 8</p>
         </div>
-
-        {error && (
-          <div className="p-3 rounded-lg text-center mb-4" style={{ backgroundColor: '#ffebee', color: '#c62828' }}>
-            {error}
+        <div className="bg-white rounded-2xl shadow-lg border border-secondary-100 p-8">
+          {renderStep()}
+          {error && <div className="mt-6 bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">{error}</div>}
+          {success && <div className="mt-6 bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg text-sm">{success}</div>}
+          {currentStep < 8 && (
+            <div className="mt-8 flex gap-3">
+              {currentStep > 1 && (
+                <button onClick={prevStep} className="flex-1 py-3 bg-secondary-100 hover:bg-secondary-200 text-secondary-700 font-semibold rounded-lg">Back</button>
+              )}
+              <button onClick={nextStep} className={`py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md ${currentStep === 1 ? 'w-full' : 'flex-1'}`}>Continue</button>
+            </div>
+          )}
+          <div className="flex justify-center gap-2 mt-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((step) => (
+              <div key={step} className={`h-2 rounded-full transition-all ${currentStep === step ? 'w-8 bg-primary-600' : 'w-2 bg-secondary-300'}`} />
+            ))}
           </div>
-        )}
-
-        {success && (
-          <div className="p-3 rounded-lg text-center mb-4" style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}>
-            {success}
-          </div>
-        )}
-
-        {currentStep < 8 && (
-          <button
-            onClick={nextStep}
-            className="w-full py-3 rounded-xl font-medium transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-            style={{ 
-              backgroundColor: '#4D6A6D',
-              color: 'white'
-            }}
-          >
-            Continue
-          </button>
-        )}
-
-        <div className="flex justify-center space-x-3 mt-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((step) => (
-            <div
-              key={step}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                currentStep === step ? 'w-4' : ''
-              }`}
-              style={{ 
-                backgroundColor: currentStep === step ? '#4D6A6D' : '#829191'
-              }}
-            />
-          ))}
+        </div>
+        <div className="text-center mt-6">
+          <p className="text-secondary-600">Already have an account? <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold">Sign in</Link></p>
         </div>
       </div>
     </div>
