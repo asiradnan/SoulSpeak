@@ -57,14 +57,26 @@ export async function sendMessage(req, res) {
           return res.status(404).json({ message: 'Chat not found' });
       }
 
-      // Add the new message
+      // Add the new message with sender marked as read
       chat.messages.push({
           sender: userId,
-          content
+          content,
+          readBy: [userId]
       });
       
       // Update lastMessageTime to current timestamp
       chat.lastMessageTime = new Date();
+      
+      // Increment unread count for other participants
+      const otherParticipants = chat.participants.filter(p => p.toString() !== userId);
+      otherParticipants.forEach(participantId => {
+          const unreadEntry = chat.unreadCount.find(u => u.userId.toString() === participantId.toString());
+          if (unreadEntry) {
+              unreadEntry.count += 1;
+          } else {
+              chat.unreadCount.push({ userId: participantId, count: 1 });
+          }
+      });
       
       const savedChat = await chat.save();
 
@@ -108,6 +120,42 @@ export async function getChats(req, res) {
 
     res.status(200).json(chats);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export async function markMessagesAsRead(req, res) {
+  try {
+    const { chatId } = req.body;
+    const userId = req.user.id;
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found' });
+    }
+
+    // Mark all messages as read by current user
+    chat.messages.forEach(message => {
+      if (!message.readBy.includes(userId)) {
+        message.readBy.push(userId);
+      }
+    });
+
+    // Reset unread count for this user
+    const unreadEntry = chat.unreadCount.find(u => u.userId.toString() === userId);
+    if (unreadEntry) {
+      unreadEntry.count = 0;
+    }
+
+    await chat.save();
+
+    const populatedChat = await Chat.findById(chatId)
+      .populate('participants', 'username email isOnline isCompanion')
+      .populate('messages.sender', '_id username profilePicture');
+
+    res.status(200).json(populatedChat);
+  } catch (error) {
+    console.error('Mark as read error:', error);
     res.status(500).json({ error: error.message });
   }
 };

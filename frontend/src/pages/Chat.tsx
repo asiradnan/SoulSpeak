@@ -25,6 +25,10 @@ interface Chat {
     participants: User[];
     messages: Message[];
     lastMessage?: Message;
+    unreadCount?: Array<{
+        userId: string;
+        count: number;
+    }>;
 }
 
 interface TypingStatus {
@@ -111,6 +115,9 @@ useEffect(() => {
     if (currentChat?._id && socket.current) {
         console.log('Joining chat room:', currentChat._id);
         socket.current.emit('join', currentChat._id);
+        
+        // Mark messages as read when opening a chat
+        markMessagesAsRead(currentChat._id);
         
         // Clear typing indicator and message when switching chats
         setMessage('');
@@ -235,6 +242,24 @@ useEffect(() => {
             console.log(response.data);
         } catch (error) {
             throw new Error('Failed to fetch chats');
+        }
+    };
+
+    const markMessagesAsRead = async (chatId: string) => {
+        try {
+            const response = await axios.post(
+                `${API_URL}/chat/mark-read`,
+                { chatId },
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+            );
+            // Update the chat with read status
+            setChats(prevChats =>
+                prevChats.map(chat =>
+                    chat._id === chatId ? response.data : chat
+                )
+            );
+        } catch (error) {
+            console.error('Error marking messages as read:', error);
         }
     };
 
@@ -388,6 +413,7 @@ useEffect(() => {
                         const otherParticipant = chat.participants.find(
                             p => p._id !== currentUser?._id
                         );
+                        const unreadCount = chat.unreadCount?.find(u => u.userId === currentUser?._id)?.count || 0;
                         return (
                             <div
                                 key={chat._id}
@@ -397,9 +423,16 @@ useEffect(() => {
                                 }`}
                             >
                                 <div className="flex justify-between items-center">
-                                    <span className="font-medium text-gray-800">
-                                        {otherParticipant?.username}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-800">
+                                            {otherParticipant?.username}
+                                        </span>
+                                        {unreadCount > 0 && (
+                                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold">
+                                                {unreadCount > 99 ? '99+' : unreadCount}
+                                            </span>
+                                        )}
+                                    </div>
                                     {chat.lastMessage && (
                                         <span className="text-xs text-gray-500">
                                             {format(new Date(chat.lastMessage.timestamp || Date.now()), 'HH:mm')}
