@@ -103,7 +103,7 @@ export async function getChats(req, res) {
       participants: userId
     })
       .populate('participants', 'username email isOnline isCompanion')
-      .populate('messages.sender', 'username profilePicture')
+      .populate('messages.sender', '_id username profilePicture')
       .sort({ lastMessageTime: -1 });
 
     res.status(200).json(chats);

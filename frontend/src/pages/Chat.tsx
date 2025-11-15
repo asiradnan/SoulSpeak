@@ -9,7 +9,7 @@ import API_URL from '../config/api';
 interface Message {
     _id: string;
     content: string;
-    sender: string;
+    sender: string | User;
     timestamp: string;
 }
 
@@ -86,6 +86,10 @@ const Chat: React.FC = () => {
     useEffect(() => {
         initializeChat();
         return () => {
+            // Clear typing indicator when component unmounts
+            if (currentChat && socket.current) {
+                socket.current.emit('stopTyping', { chatId: currentChat._id });
+            }
             socket.current?.disconnect();
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
@@ -103,14 +107,18 @@ useEffect(() => {
     currentChatRef.current = currentChat; // Keep the ref updated
 }, [currentChat]);
 
-    useEffect(() => {
-        if (currentChat?._id && socket.current) {
-            console.log('Joining chat room:', currentChat._id);
-            socket.current.emit('join', currentChat._id);
+useEffect(() => {
+    if (currentChat?._id && socket.current) {
+        console.log('Joining chat room:', currentChat._id);
+        socket.current.emit('join', currentChat._id);
+        
+        // Clear typing indicator and message when switching chats
+        setMessage('');
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
         }
-    }, [currentChat]);
-    
-    const initializeChat = async () => {
+    }
+}, [currentChat]);    const initializeChat = async () => {
         try {
             setIsLoading(true);
             await fetchCurrentUser();
@@ -176,7 +184,9 @@ useEffect(() => {
         });
 
         socket.current.on('stopTyping', ({ chatId }: { chatId: string }) => {
-            setTypingStatus(prev => prev?.chatId === chatId ? null : prev);
+            setTypingStatus(prev => 
+                prev && prev.chatId === chatId ? null : prev
+            );
         });
 
         socket.current.on('userOnline', ({ userId }: { userId: string }) => {
@@ -293,7 +303,11 @@ useEffect(() => {
             );
             console.log(response.data);
             setMessage('');
-            socket.current.emit('stopTyping', currentChat._id);
+            // Clear typing indicator when message is sent
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+            socket.current.emit('stopTyping', { chatId: currentChat._id });
         } catch (error) {
             setError('Failed to send message. Please try again.');
         }
@@ -418,16 +432,17 @@ useEffect(() => {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-                            {currentChat.messages.map(msg => (
+                            {currentChat.messages.map(msg => {
+                                const senderId = typeof msg.sender === 'object' ? msg.sender._id : msg.sender;
+                                const isCurrentUser = senderId === currentUser?._id;
+                                return (
                                 <div
                                     key={msg._id}
-                                    className={`my-2 max-w-[70%] ${
-                                        msg.sender === currentUser?._id ? 'ml-auto' : ''
-                                    }`}
+                                    className={`my-2 max-w-[70%] ${isCurrentUser ? 'ml-auto' : ''}`}
                                 >
                                     <div
                                         className={`p-3 rounded-lg ${
-                                            msg.sender === currentUser?._id
+                                            isCurrentUser
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-white text-gray-800 border border-gray-200'
                                         }`}
@@ -436,13 +451,14 @@ useEffect(() => {
                                     </div>
                                     <div
                                         className={`text-xs text-gray-500 mt-1 ${
-                                            msg.sender === currentUser?._id ? 'text-right' : ''
+                                            isCurrentUser ? 'text-right' : ''
                                         }`}
                                     >
                                         {format(new Date(msg.timestamp || Date.now()), 'HH:mm')}
                                     </div>
                                 </div>
-                            ))}
+                            );
+                            })}
                             {typingStatus && typingStatus.chatId === currentChat._id && (
                                 <div className="text-sm text-gray-500 italic">
                                     {typingStatus.username} is typing...
