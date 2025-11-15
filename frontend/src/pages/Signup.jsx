@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import API_URL from '../config/api';
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     referral: '',
@@ -23,6 +25,13 @@ const Signup = () => {
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  // Redirect to home if user is already signed in
+  React.useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const referralOptions = [
     'Social Media',

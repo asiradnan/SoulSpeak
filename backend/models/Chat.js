@@ -22,7 +22,7 @@ const chatSchema = new mongoose.Schema({
     ref: 'User'
   }],
   messages: [messageSchema],
-  lastMessage: {
+  lastMessageTime: {
     type: Date,
     default: Date.now
   }

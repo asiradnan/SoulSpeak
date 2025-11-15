@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import API_URL from "../config/api";
 import { useAuth } from "../context/AuthContext";
+import React from "react";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -13,7 +14,14 @@ const Login = () => {
     const [resetEmail, setResetEmail] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, user } = useAuth();
+
+    // Redirect to home if user is already signed in
+    React.useEffect(() => {
+        if (user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

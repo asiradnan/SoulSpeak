@@ -21,6 +21,7 @@ document.title = 'SoulSpeak - Mental Health Support Community';
 
 const Home = () => {
   const [quote, setQuote] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchQuote = async () => {
@@ -189,6 +190,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
+      {!user && (
       <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
         <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-3xl overflow-hidden">
           <div className="px-8 py-16 md:p-20 text-center text-white">
@@ -204,6 +206,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 };

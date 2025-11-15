@@ -63,8 +63,7 @@ export async function sendMessage(req, res) {
           content
       });
       
-      // Update lastMessage and lastMessageTime
-      chat.lastMessage = content;
+      // Update lastMessageTime to current timestamp
       chat.lastMessageTime = new Date();
       
       const savedChat = await chat.save();
