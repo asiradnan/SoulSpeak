@@ -24,8 +24,8 @@ const Home = () => {
   useEffect(() => {
     const fetchQuote = async () => {
       try {
-        const response = await axios.get('https://api.adviceslip.com/advice');
-        setQuote(response.data.slip.advice);
+        const response = await axios.get(`${API_URL}/quote`);
+        setQuote(`${response.data.text} — ${response.data.author}`);
       } catch (error) {
         console.log('Error fetching quote:', error);
         setQuote('Welcome to a peaceful space for meaningful connections');
