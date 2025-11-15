@@ -1,0 +1,35 @@
+backend/
+├── controllers/
+│   ├── authController.js          ← Auth & Email Management
+│   ├── userController.js          ← User Profiles & Pictures
+│   ├── postController.js          ← Forum Posts & Comments
+│   ├── quoteController.js         ← Daily Quotes
+│   ├── companionController.js     ← Companion Features
+│   ├── reportController.js        ← Issue Reporting
+│   ├── questionController.js      ← Training Questions
+│   └── adminController.js         ← (Admin features - unchanged)
+│   └── chatController.js          ← (Chat features - unchanged)
+│
+├── routes/
+│   ├── route.js                   ← Main routes (organized imports)
+│   ├── adminRoute.js              ← (Admin routes - unchanged)
+│   └── chatRoute.js               ← (Chat routes - unchanged)
+│
+├── models/
+│   ├── userModel.js
+│   ├── Post.js
+│   ├── Report.js
+│   ├── Chat.js
+│   ├── profilePicture.js
+│   └── questionModel.js
+│
+├── config/
+│   ├── db.js
+│   └── middlewares.js
+│
+├── socket/
+│   └── chatSocket.js
+│
+├── uploads/                       ← Profile pictures & post images
+├── index.js                       ← Main server file
+└── ...
