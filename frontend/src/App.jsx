@@ -10,6 +10,7 @@ import Forum from './pages/Forum'
 import Report from './pages/Report'
 import Chat from './pages/Chat'
 import ResetPassword from './pages/ResetPassword'
+import { AuthProvider, useAuth } from './context/AuthContext'
 
 import axios from 'axios'
 import API_URL from './config/api'
@@ -207,37 +208,7 @@ const Home = () => {
   );
 };
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState(null)
-  
-  // Fetch profile once on mount
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem('token')
-      if (token) {
-        try {
-          const response = await axios.get(`${API_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setUser(response.data.user);
-        } catch (error) {
-          console.error('Failed to fetch profile:', error);
-          // If token is invalid, clear it
-          if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            setUser(null);
-          }
-        }
-      }
-    }
-    
-    fetchProfile();
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    window.location.href = '/login';
-  }
+  const { user, logout } = useAuth();
 
   return (
     <Router>
@@ -300,7 +271,10 @@ const App = () => {
                   </Link>
                 )}
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    logout();
+                    window.location.href = '/login';
+                  }}
                   className="px-6 py-2.5 bg-secondary-100 hover:bg-secondary-200 text-secondary-700 font-medium rounded-lg transition-all duration-200"
                 >
                   Logout

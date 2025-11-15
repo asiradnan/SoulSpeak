@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import API_URL from "../config/api";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Login = () => {
     const [resetEmail, setResetEmail] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -25,7 +27,7 @@ const Login = () => {
         try {
             const response = await axios.post(`${API_URL}/login`, formData);
             if (response.status === 200) {
-                localStorage.setItem("token", response.data.token);
+                login(response.data.token);
                 navigate("/");
             }
         } catch (error) {

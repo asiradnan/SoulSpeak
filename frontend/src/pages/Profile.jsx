@@ -203,6 +203,8 @@ const Profile = () => {
                 } catch (uploadErr) {
                     console.error('Failed to upload profile picture:', uploadErr);
                     setError("Profile updated, but failed to upload new picture. Please try again.");
+                    // Scroll to top to show error
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                     return; // Don't set success if image upload failed
                 }
             }
@@ -223,6 +225,9 @@ const Profile = () => {
                 newPassword: "",
             });
             
+            // Scroll to top to show success message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
             // Clear success message after 3 seconds
             setTimeout(() => setSuccess(null), 3000);
         } catch (err) {
@@ -231,6 +236,8 @@ const Profile = () => {
             } else {
                 setError("Failed to update profile. Please try again.");
             }
+            // Scroll to top to show error
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -623,6 +630,7 @@ const Profile = () => {
 
                                 <div>
                                     <h4 className="text-lg font-semibold text-secondary-900 mb-4">Security</h4>
+                                    <p className="text-sm text-secondary-600 mb-4">To change your password or email, you need to enter your current password for security verification.</p>
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-secondary-700 mb-2">Current Password</label>
@@ -647,6 +655,11 @@ const Profile = () => {
                                             />
                                         </div>
                                     </div>
+                                    {(formData.newPassword || formData.email !== profile?.email) && (
+                                        <div className="mt-4 p-3 bg-info-50 border border-info-200 rounded-lg text-sm text-info-700">
+                                            ℹ️ Current password is required to save changes to your security settings.
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex gap-4 pt-6">

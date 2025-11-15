@@ -71,17 +71,19 @@ export const updateProfile = async (req, res) => {
         if (emailtaken && emailtaken._id != userId) {
             return res.status(400).json({ message: "Email already in use." });
         }
-        if (newPassword != "") {
+
+        // Handle password change - only if newPassword is provided and not empty
+        if (newPassword && newPassword.trim() !== "") {
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 return res.status(401).json({ message: "Invalid current password." });
             }
             user.password = await bcrypt.hash(newPassword, 10);
         }
-        var v = true
-        if (user.email != email) v = false;
 
-        const user_updated = await User.findByIdAndUpdate(userId, {
+        // Only change verified status if email has changed
+        const emailChanged = user.email !== email;
+        const updateData = {
             name,
             username,
             email,
@@ -90,11 +92,23 @@ export const updateProfile = async (req, res) => {
             ageGroup,
             country,
             goals,
-            preferences,
-            verified: v
-        }, { new: true });
+            preferences
+        };
 
-        await user_updated.save();
+        // If email changed, set verified to false; otherwise keep existing verified status
+        if (emailChanged) {
+            updateData.verified = false;
+        }
+        // If email didn't change, don't modify verified status at all
+
+        const user_updated = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+        // Save the password change if it was made
+        if (newPassword && newPassword.trim() !== "") {
+            user_updated.password = user.password;
+            await user_updated.save();
+        }
+
         console.log("User updated:", user_updated);
         res.status(200).json({ user: user_updated });
     } catch (error) {
